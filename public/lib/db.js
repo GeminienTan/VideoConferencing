@@ -1,4 +1,5 @@
 const mysql = require("mysql");
+
 const mysqlConnection = mysql.createPool({
     host:'us-cdbr-east-03.cleardb.com',
     user:'bf0341eb7f4f7d',
@@ -6,7 +7,7 @@ const mysqlConnection = mysql.createPool({
     database:'heroku_e846e0cbb8faabc',
   })
 
-mysqlConnection.connect(function(error){
+  mysqlConnection.getConnection(function(error){
 	if(!!error) {
 		console.log(error);
 	} else {
