@@ -33,9 +33,45 @@ const createMeeting = (u_id,type,c_id,cameraOn) => {
   );
 };
 
-const addAgenda = (id) => {
-  //var dist = document.getElementById('value').value;
-  alert(id);
+const addAgenda = (id,addBtn) => { 
+  
+  var a_topic = $(addBtn).closest('tr').find('.a_topic').val();
+  var a_presenter = $(addBtn).closest('tr').find('.a_presenter').val()
+  var a_time_allocated = $(addBtn).closest('tr').find('.a_time_allocated').val();
+  var rowCount = $(addBtn).closest('table').find('tr').length;
+
+$.ajax({
+  url: "addAgenda",
+  method: "POST",
+  data: {
+    s_id: id,
+    a_topic:a_topic,
+    a_presenter:a_presenter,
+    a_time_allocated:a_time_allocated
+  },
+  success:function(response){  
+             if(response.msg=='success'){ 
+              var a_id = response.data; 
+              //JSAlert.alert('Insert successfully');
+               var html = '<tr class="update">';
+                html += '<td class="pt-3-half">'+(rowCount-1)+'</td>';
+                html += '<td class="pt-3-half update" data-id="'+a_id+'" data-column="a_topic" data-type="agenda" contenteditable="true">'+a_topic+'</td>';
+                html += '<td class="pt-3-half update" data-id="'+a_id+'" data-column="a_presenter" data-type="agenda" contenteditable="true">'+a_presenter+'</td>';
+                html += '<td class="pt-3-half update" data-id="'+a_id+'" data-column="a_time"  data-type="agenda" contenteditable="true">'+a_time_allocated+'</td>';
+                html += '<td><span class="table-remove"><button type="submit" onclick="deleteAgenda('+a_id+')" class="btn btn-danger btn-rounded btn-sm my-0 text-danger">Remove</button></span></td></tr>';
+                $(addBtn).closest('table').append(html);
+                var $tr = $(addBtn).closest('tr');
+                $input = $tr.find('input');
+                $input.val('');
+             }else{  
+         JSAlert.alert('Error occurred, please try again.');  
+             }  
+  },  
+  error:function(response){  
+    alert('server error occured')  
+  }
+});
+
 };
 
 
@@ -114,10 +150,7 @@ const deleteContact = (id) => {
 };
 
 const deleteAccount = (id) => {
-  alert("deleteAccount");
-  alert(id);
   JSAlert.confirm("Are you sure you want to remove this account? Your friend will miss you.").then(function(result) {
- 
     // Check if pressed yes
     if (!result){
     return;
@@ -129,8 +162,6 @@ const deleteAccount = (id) => {
 };
 
 const deleteSchedule = (id) => {
-  alert("deleteSchedule");
-  alert(id);
   JSAlert.confirm("Are you sure you want to remove schedule?").then(function(result) {
  
     // Check if pressed yes
@@ -144,8 +175,6 @@ const deleteSchedule = (id) => {
 };
 
 const deleteAgenda = (id) => {
-  alert("deleteAgenda");
-  alert(id);
   JSAlert.confirm("Are you sure you want to remove this agenda?").then(function(result) {
  
     // Check if pressed yes
@@ -190,6 +219,17 @@ const addChannel = (id) =>{
   return false;
 }
 
+$('#s_etime').on('blur', function() {
+      var startTime = $('#s_stime').val();
+      var endTime = $('#s_etime').val();
+      var msgText = ("Meeting end time must be after " + startTime + ".  Please update time(s)");
+      if (startTime > endTime) {
+        $('#addScheduleButton').prop('disabled', true);
+        
+      JSAlert.alert(msgText);
+    }
+});
+  
 
 
 

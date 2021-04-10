@@ -6,6 +6,7 @@
 		<title>Video Conferencing Application</title>
 		<meta name="description" content="#">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="google-signin-client_id" content="52704063809-8ltb87mf5h880505mofd1l6p0pdrhdgr.apps.googleusercontent.com">
 		<!-- Bootstrap core CSS -->
 		<link href="dist/css/lib/bootstrap.min.css" type="text/css" rel="stylesheet">
 		<!-- Swipe core CSS -->
@@ -20,6 +21,12 @@
 	</head>
 	<body>
 		<main>
+			<% if(alertMessage !=""){ %>
+				<div id=flashwrapper class="alert alert-dismissible" role="alert"><%= alertMessage %>
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close" onClick="close('flashwrapper')">
+					<span aria-hidden="true">&times;</span>
+				</div>
+			<% } %>
 			<div class="layout">
 				<!-- Start of Navigation -->
 				<div class="navigation">
@@ -32,7 +39,7 @@
 								<a href="#discussions" data-toggle="tab" class="f-grow1">Chat<i class="material-icons">chat_bubble_outline</i></a>
 								<a href="#schedule" data-toggle="tab">Schedule<i class="material-icons">today</i></a>
 								<a href="#settings" data-toggle="tab">Settings<i class="material-icons">settings</i></a>
-								<button class="btn power" onclick="visitPage();">Log out<i class="material-icons">power_settings_new</i></button>
+								<button class="btn power" onclick="signOut()">Log out<i class="material-icons">power_settings_new</i></button>
 							</div>
 						</div>
 					</div>
@@ -421,23 +428,6 @@
 														</div>
 														<i class="material-icons">keyboard_arrow_right</i>
 													</a>
-													<!--<div class="collapse" id="editPassword" aria-labelledby="headingThree" data-parent="#accordionSettings">
-														<div class="content">
-															<div class="field">
-																<label for="password">Enter Current Password</label>
-																<input type="password" class="form-control" id="currentPassword" name="currentPassword"required>
-															</div>
-															<div class="field">
-																<label for="password">Enter New Password</label>
-																<input type="password" class="form-control" id="newPassword" name="newPassword"required>
-															</div>
-															<div class="field">
-																<label for="password"> Confirm Password</label>
-																<input type="password" class="form-control" id="confirmPassword" name="confirmPassword"required>
-															</div>
-															<button type="submit" class="btn button w-100">Change Password</button>
-														</div>
-													</div>-->
 												</div>
 												<!-- End of Password Settings -->
 												<!-- Start of Account Settings -->
@@ -507,7 +497,7 @@
 												
 												<!-- Start of Logout -->
 												<div class="category">
-													<a href="index" class="title collapsed">
+													<a onclick="signOut()" class="title collapsed">
 														<i class="material-icons md-30 online">power_settings_new</i>
 														<div class="data">
 															<h5>Power Off</h5>
@@ -866,36 +856,6 @@
 												<% } 
 											} %>
 											
-											<!--<div class="date">
-												<hr>
-												<span>Yesterday</span>
-												<hr>
-											</div>
-											<div class="message">
-												<img class="avatar-md" src="dist/img/avatars/avatar-female-5.jpg" data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
-												<div class="text-main">
-													<div class="text-group border">
-														<div class="text text-info">
-															<p>Hey guys, I just started my FYP chapter 3 .... </p>
-														</div>
-													</div>
-													<span>09:46 AM</span>
-												</div>
-											</div>
-											<div class="message">
-												<img class="avatar-md" src="dist/img/avatars/avatar-female-5.jpg" data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
-												<div class="text-main">
-													<div class="text-group">
-														<div class="text typing">
-															<div class="wave">
-																<span class="dot"></span>
-																<span class="dot"></span>
-																<span class="dot"></span>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>-->
                                         </div>
 									</div>
 									
@@ -1056,7 +1016,7 @@
 										 <div class="col-md-12">
 											<div class="inside">
 											   <div class="data">
-												  <h3>Meeting Agenda  - <%= schedule[i].s_title%></h3>
+												  <h3>Meeting Agenda</h3>
 											   </div>
 											   <div class="dropdown">
 												  <button class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons md-30">more_vert</i></button>
@@ -1078,56 +1038,47 @@
 												   <span class="table-add float-right mb-3 mr-2"><a href="#!" class="text-success"><i class="fas fa-plus fa-2x" aria-hidden="true"></i></a></span>
 												   <table class="table table-bordered table-responsive-md table-striped text-center">
 													  <thead>
-														 <tr>
+														 <tr class="update">
 															<th class="text-center">Title</th>
-															<td colspan="5" class="pt-3-half" contenteditable="true"><%= schedule[i].s_title%></td>
+															<td colspan="5" class="pt-3-half update" data-id="<%= schedule[i].s_id%>" data-column="s_title" data-type="schedule" contenteditable="true"><%= schedule[i].s_title%></td>
 														 </tr>
 													  </thead>
 													  <tbody>
-														 <tr>
+														 <tr class="update">
 															<th class="text-center">Date</th>
-															<td colspan="" class="pt-3-half" contenteditable="true"><%= moment(schedule[i].s_date).format( 'DD MMM YYYY - ddd') %></td>
+															<td colspan="" class="pt-3-half update" data-id="<%= schedule[i].s_id%>" data-column="s_date" data-type="schedule" contenteditable="true"><%= moment(schedule[i].s_date).format( 'DD MMM YYYY - ddd') %></td>
 															<th class="text-center">Start Time</th>
-															<td colspan="" class="pt-3-half" contenteditable="true"><%= schedule[i].s_stime  %></td>
+															<td colspan="" class="pt-3-half update" data-id="<%= schedule[i].s_id%>" data-column="s_stime" data-type="schedule" contenteditable="true"><%= schedule[i].s_stime  %></td>
 															<th class="text-center">End Time</th>
-															<td colspan="" class="pt-3-half" contenteditable="true"><%= schedule[i].s_etime %></td>
+															<td colspan="" class="pt-3-half update" data-id="<%= schedule[i].s_id%>" data-column="s_etime" data-type="schedule" contenteditable="true"><%= schedule[i].s_etime %></td>
 														 </tr>
 														 <!-- Table line -->
-														 <tr>
+														 <tr class="update">
 															<th class="text-center">Objective</th>
-															<td colspan="5" class="pt-3-half" contenteditable="true"><%= schedule[i].s_objective %></td>
+															<td colspan="5" class="pt-3-half update" data-id="<%= schedule[i].s_id%>" data-column="s_objective" data-type="schedule" contenteditable="true"><%= schedule[i].s_objective %></td>
 														 </tr>
-														 <tr>
+														 <tr class="update">
 															<th class="text-center">Participants</th>
-															<td colspan="5" class="pt-3-half" contenteditable="true">
+															<td colspan="5" class="pt-3-half update" data-id="<%= schedule[i].s_id%>" data-column="s_attendees" data-type="schedule" contenteditable="true">
 															   <% for (var j in attendees){ 
 																  if(attendees[j].s_id == schedule[i].s_id ){ %> 
-															   <p display="block">	<%= attendees[j].u_name %> </p>
+															   <p display="block btn">	<%= attendees[j].u_name %> </p>
 															   <%}
-																  }%>
+																}%>
+															   <p display="block btn">	<%= schedule[i].owner_name %> </p>
 															</td>
 														 </tr>
 													  </tbody>
 												   </table>
-												   <datalist id="time">
-													  <option value="5">5 minutes</option>
-													  <option value="10">10 minutes</option>
-													  <option value="20">20 minutes</option>
-													  <option value="30">30 minutes</option>
-													  <option value="60">1 hour</option>
-												   </datalist>
 												   <datalist id="presenter-<%= schedule[i].s_id%>">
+													<option value="<%= schedule[i].owner_name %>"><%= schedule[i].owner_name %></option>
 													  <% for (var j in attendees){
 														 if(attendees[j].s_id == schedule[i].s_id ){ %> 
-													  <option value="<%= attendees[j].u_name %>"><% attendees[j].u_name %></option>
+													  <option value="<%= attendees[j].u_name %>"><%= attendees[j].u_name %></option>
 													  <%}
 														 }%>
 												   </datalist>
-												   <!--
-													  <span class="table-remove"><button type="submit"
-													   class="btn btn-primary bg-primary btn-rounded btn-sm my-0 add">Insert New Row</button>
-													  </span>-->
-												   <table id="agenda" class="table-bordered table-responsive-md table-striped text-center" style="padding:0;">
+												   <table id="<%= schedule[i].s_id %>" name="agenda" class="table-bordered table-responsive-md table-striped text-center" style="padding:0;">
 													  <col style="width:2%">
 													  <col>
 													  <col style="width:20%">
@@ -1143,15 +1094,33 @@
 														 </tr>
 													  </thead>
 													  <tbody>
+														<tr id="add_details-<%= schedule[i].s_id %>" name="add_details">
+															<td></td>
+															<td><input type="text" name="a_topic" style="width:100%" class="a_topic"></td>
+															<td>
+															   <select  name="a_presenter"  style="width:100%;height: 28px;" class="a_presenter">
+																  
+																  <% for (var j in attendees){
+																	 if(attendees[j].s_id == schedule[i].s_id ){ %> 
+																  <option value="<%= attendees[j].u_name %>"><%= attendees[j].u_name %></option>
+																  <%}
+																	 }%>
+																  <option value="<%= schedule[i].owner_name %>"><%= schedule[i].owner_name %></option>
+															   </select>
+															</td>
+															<td><input name="a_time_allocated"  type="number" class="a_time_allocated" min="1"></td>
+															<td><span><button  type="submit" name="addAgenda" class="btn btn-info btn-rounded btn-sm my-0 text-info" onclick="addAgenda('<%= schedule[i].s_id%>',this)">Add</button></span></td>
+														 </tr>
+
 														 <% 
 															var x= 1
 															for (var k in agenda){
 															 if(agenda[k].s_id == schedule[i].s_id ){ %>
 														 <tr class="update">
 															<td class="pt-3-half"><%= x %></td>
-															<td class="pt-3-half update" data-id="<%= agenda[k].a_id %>" data-column="a_topic" contenteditable="true"><%= agenda[k].a_topic %></td>
-															<td class="pt-3-half update" data-id="<%= agenda[k].a_id %>" data-column="a_presenter" contenteditable="true"><%= agenda[k].presenter %></td>
-															<td class="pt-3-half update" data-id="<%= agenda[k].a_id %>" data-column="a_time"  contenteditable="true"><%= agenda[k].a_time_allocated %></td>
+															<td class="pt-3-half update" data-id="<%= agenda[k].a_id %>" data-column="a_topic" data-type="agenda" contenteditable="true"><%= agenda[k].a_topic %></td>
+															<td class="pt-3-half update" data-id="<%= agenda[k].a_id %>" data-column="a_presenter" data-type="agenda" contenteditable="true"><%= agenda[k].presenter %></td>
+															<td class="pt-3-half update" data-id="<%= agenda[k].a_id %>" data-column="a_time"  data-type="agenda" contenteditable="true"><%= agenda[k].a_time_allocated %></td>
 															<td>
 															   <span class="table-remove">
 															   <button type="submit" onclick="deleteAgenda('<%= agenda[k].a_id%>')" class="btn btn-danger btn-rounded btn-sm my-0 text-danger">Remove</button></span>
@@ -1159,22 +1128,9 @@
 														 </tr>
 														 <% x+=1 
 															}
-															}%>
-														 <tr>
-															<td></td>
-															<td><input type="text" name="a_topic"  style="width:100%"></td>
-															<td>
-															   <select  name="a_presenter"  style="width:100%;height: 28px;" >
-																  <% for (var j in attendees){
-																	 if(attendees[j].s_id == schedule[i].s_id ){ %> 
-																  <option value="<%= attendees[j].u_name %>"><%= attendees[j].u_name %></option>
-																  <%}
-																	 }%>
-															   </select>
-															</td>
-															<td><input name="a_time_allocated"  list="time"></td>
-															<td><span><button  type="submit" name="addAgenda" class="btn btn-info btn-rounded btn-sm my-0 text-info" onclick="addAgenda('<%= schedule[i].s_id%>')">Add</button></span></td>
-														 </tr>
+														}%>
+														
+														 
 													  </tbody>
 												   </table>
 												</div>
@@ -1209,6 +1165,7 @@
 		<script src="dist/js/jquery.amsify.suggestags.js"></script>
 		<script src="dist/js/push.min.js"></script>
 		<script src="dist/js/serviceWorker.min.js"></script>
+		<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
 		
 
 		<script>
@@ -1248,12 +1205,38 @@
 					alert("yes");
 				}
 			}*/
+			function signOut() {
+				JSAlert.confirm("Are you sure to log out?").then(function(result) {
+ 
+				// Check if pressed yes
+				if (!result){
+				return;
+				}
+				else{
+					var auth2 = gapi.auth2.getAuthInstance();
+					auth2.signOut().then(function () {
+						console.log('User signed out.');
+						window.location.href="/logout";
+					});
+				}
+				});
+				
+			}
+
+			function onLoad() {
+				gapi.load('auth2', function() {
+					gapi.auth2.init();
+				});
+			}
 
 			function scrollToBottom(el) { el.scrollTop = el.scrollHeight; }
 			scrollToBottom(document.getElementById('content'));
 
 			$(document).ready(function(){
     			$(".toast").toast('show');
+				setTimeout(function() {
+					$('.alert').fadeOut('slow');
+				}, 2000); // <-- time in milliseconds
 
 			$('#agenda, #schedule').on('focus', 'td', function() {
 				$(this).css('backgroundColor', '#EBDCFF');
@@ -1264,51 +1247,77 @@
 
 			});
 
-			var before, after = '';
+			$(document).on('DOMSubtreeModified', '.update', function(e) {
+				value = $(this).closest('td').text().trim();
+				//console.log(value)
+				var id = $(this).data("id");
+				//console.log(id);
+				var column_name = $(this).data("column");
+				//console.log(column_name);
+				var type = $(this).data("type");
+				//console.log(type);
+				console.log(value);
+				if(value !="undefined"  && id !="undefined" && type !="undefined"){
+					if(type == "agenda"){
+							update_agenda(id, column_name, value);
+						}
+						else if (type == "schedule"){
+							update_schedule(id, column_name, value);
+					}	
+				}
+				e.stopPropagation();
+				$(this).closest('td').css('backgroundColor', '#98FB98');
+				return false;
+				
 
-	$('.update').on('focus', 'td', function() {
-		//alert("touch");
-    before = $(this).text().trim();
-	});
-	$('.update').on('blur', 'td', function() {
-		after = $(this).text().trim();
-		var id = $(this).data("id");
-		var column_name = $(this).data("column");
-		var value = '';
-		if(before != after) { //if user change the input
-			if(after != '') { // if the input is not empty
-				value = after;
-				update_agenda(id, column_name, value);
-			} else {
-				alert("Error Message cannot be null. Please enter the error message.");
-				//window.location.reload();
+			});
+
+			function update_agenda(id, column_name, value) {
+			$.ajax({
+				url: "editAgenda",
+				method: "POST",
+				data: {
+					id: id,
+					column_name: column_name,
+					value: value
+				},
+				success:function(response){  
+					if(response.msg=='success'){  
+						//JSAlert.alert('Update successfully');
+
+					}else{  
+						JSAlert.alert('some error occurred try again');  
+					}  
+				},  
+				error:function(response){  
+					alert('server error occured')  
+				}  
+			});
+			//window.location.reload(false);
 			}
-		}
-	});
+			function update_schedule(id, column_name, value) {
+			$.ajax({
+				url: "editSchedule",
+				method: "POST",
+				data: {
+					id: id,
+					column_name: column_name,
+					value: value
+				},
+				success:function(response){  
+					if(response.msg=='success'){  
+						//JSAlert.alert('Update successfully');
 
-	function update_agenda(id, column_name, value) {
-	$.ajax({
-		url: "editAgenda",
-		method: "POST",
-		data: {
-			id: id,
-			column_name: column_name,
-			value: value
-		},
-		success:function(response){  
-               if(response.msg=='success'){  
-               alert('update successfully');  
-
-               }else{  
-                   alert('some error occurred try again');  
-               }  
-		},  
-		error:function(response){  
-			alert('server error occured')  
-		}  
-	});
-	//window.location.reload(false);
-	}
+					}else{  
+						JSAlert.alert('some error occurred try again');  
+					}  
+				},  
+				error:function(response){  
+					alert('server error occured')  
+				}  
+			});
+			//window.location.reload(false);
+			}
 			
 		</script>
 	</body>

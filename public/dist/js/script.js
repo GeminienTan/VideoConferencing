@@ -13,6 +13,7 @@ myVideo.addEventListener("resize", ev => {
     myVideo.style.backgroundColor = "#852FF5";
   }
 }, false);
+
 myVideo.muted = true;
 
 // while deploying change port to 443,
@@ -53,7 +54,6 @@ navigator.mediaDevices
       }, 1000)
       //alert("someone enter" + userId);
     });
-
     let msg = $("#chat_message");
     $("html").keydown((e) => {
       if (e.which === 13 && msg.val().length !== 0) {
@@ -66,7 +66,7 @@ navigator.mediaDevices
       $(".messages").append(
         `<li class="message"><b>user</b><br/>${message}</li>`
       );
-      scroolToBottom();
+      scrollToBottom();
     });
 
   });
@@ -104,7 +104,7 @@ const connectToNewUser = (userId, stream) => {
   peers[userId] = call
 };
 
-const scroolToBottom = () => {
+const scrollToBottom = () => {
   var d = $(".main__chat_window");
   d.scrollTop(d.prop("scrollHeight"));
 };

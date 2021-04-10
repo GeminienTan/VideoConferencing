@@ -173,7 +173,7 @@
                 <button type="button" class="btn" data-dismiss="modal" aria-label="Close"><i class="material-icons">close</i></button>
             </div>
             <div class="content">
-                <form action="addSchedule" method="POST" >
+                <form action="addSchedule" method="POST" id="addSchedule">
                     <input type="text" class="form-control" name="owner_id" value="<%= u_id %>" hidden>
                     <div class="form-group">
                         <label for="user">Meeting Title</label>
@@ -208,7 +208,7 @@
                             <%} %> 
                         </select>
                     </div>
-                    <button type="submit" class="btn button w-100">Add Schedule</button>
+                    <button id="addScheduleButton" type="submit" class="btn button w-100">Add Schedule</button>
                 </form>
             </div>
         </div>
