@@ -108,6 +108,10 @@ app.get("/feedback", (req, res) => {
   res.render("feedback");
 });
 
+app.get("/claimRewards/:u_name&:points", (req, res) => {
+  res.render("claimRewards",{user:req.params.u_name,points:req.params.points});
+});
+
 app.post("/admin/sign-in", (req, res) => {
   const email = req.body.ad_email;
   const key = req.body.adminKey;
@@ -181,7 +185,7 @@ app.get("/admin/getAllUser", (req, res) => {
   if(!req.session.ad_id) {
     res.redirect('/admin');
   }
-  let sql = "SELECT u_id,u_name,u_gender,u_dob,u_phone,u_email,u_point,u_status FROM user";
+  let sql = "SELECT u_id,u_name,u_gender,u_dob,u_phone,u_email,u_point,u_status,u_register_date FROM user";
   let query = mysqlConnection.query(sql,(err, results) => {
     if(err) throw err;
     res.render(path.join(__dirname , 'views' ,'admin/user-list'),{ moment:moment,user:results} );
@@ -249,11 +253,12 @@ app.post("/admin/addAdmin", (req, res) => {
 
 //when user submit form to sign up 
 app.post('/sign-up',(req, res) => {
+  let current_time = moment().format("YYYY-MM-DD HH:mm:ss");
   const u_fname = req.body.fname;
   const u_lname = req.body.lname;
   const u_name = u_fname +" "+ u_lname;
   const u_password = CryptoJS.MD5(req.body.password);
-  let data = {u_name: u_name,u_gender: req.body.gender,u_dob: req.body.birthday,u_phone: req.body.phone,u_email: req.body.email,u_password: u_password.toString(),u_profilepic: "dist/img/avatars/avatar-default.jpg",u_point:0,u_status:'A'};
+  let data = {u_name: u_name,u_gender: req.body.gender,u_dob: req.body.birthday,u_phone: req.body.phone,u_email: req.body.email,u_password: u_password.toString(),u_profilepic: "dist/img/avatars/avatar-default.jpg",u_point:0,u_status:'A',u_register_date:current_time};
    let sql = "INSERT INTO user SET ?";
     let query = mysqlConnection.query(sql, data,(err, results) => {
     if(err) throw err;
@@ -263,11 +268,12 @@ app.post('/sign-up',(req, res) => {
 
 //when user submit form to sign up 
 app.post('/loginGoogle',(req, res) => {
+  let current_time = moment().format("YYYY-MM-DD HH:mm:ss");
   const name = req.body.u_name;
   const email = req.body.u_email;
   const profilepic = req.body.u_profilepic;
   const password = req.body.token;
-  let data = {u_name: name,u_email: email,u_password: password,u_profilepic:profilepic,u_point:0,u_status:'A'};
+  let data = {u_name: name,u_email: email,u_password: password,u_profilepic:profilepic,u_point:0,u_status:'A',u_register_date:current_time};
   
   let sql1 = "SELECT * from user WHERE u_email= ? AND u_password=? ";
   
@@ -336,15 +342,15 @@ app.get("/home",(req,res) =>{
   var queries = [
         "SELECT ct_id,user.u_id,u_name,u_profilepic,u_status,u_email FROM user INNER JOIN contact ON (contact.ct_email = user.u_email) WHERE contact.u_id =? AND contact.ct_status = 'A'",
         "SELECT DISTINCT room.r_id as r_id,c_title,c_desc,c_id FROM room LEFT JOIN room_record ON (room.r_id = room_record.r_id) INNER JOIN channel ON (channel.r_id = room.r_id) WHERE room_record.u_id=? OR room.r_owner_id =? AND room.r_status = 'A' AND channel.c_status ='A'",
-        "SELECT DISTINCT room.r_id as r_id,r_title,r_desc,r_status,u_name as owner_name ,u_profilepic as owner_profilepic,user.u_id as owner_id FROM room LEFT JOIN room_record ON (room.r_id = room_record.r_id) INNER JOIN user ON (room.r_owner_id = user.u_id) WHERE room_record.u_id= ? OR room.r_owner_id =? AND room.r_status = 'A'",
+        "SELECT DISTINCT room.r_id as r_id,r_title,r_desc,r_status,u_name as owner_name ,u_profilepic as owner_profilepic,user.u_id as owner_id FROM room LEFT JOIN room_record ON (room.r_id = room_record.r_id AND room_record.rr_status = 'A') INNER JOIN user ON (room.r_owner_id = user.u_id) WHERE room_record.u_id= ? OR room.r_owner_id =? AND room.r_status = 'A' ",
         "SELECT rr_id,room_record.r_id as r_id,user.u_name as u_name,user.u_profilepic as u_profilepic FROM room_record INNER JOIN user ON (user.u_id = room_record.u_id) WHERE rr_status='A'",
         "SELECT schedule.*, user.u_name as owner_name FROM schedule INNER JOIN user ON (user.u_id = schedule.u_id) WHERE s_status = 'A' AND schedule.u_id=?",
         "SELECT s_id,user.u_name as u_name FROM attendees INNER JOIN user ON (user.u_id = attendees.u_id)",
         "SELECT schedule.s_id as s_id, user.u_name as presenter,a_id,a_topic,a_time_allocated FROM agenda INNER JOIN schedule ON (schedule.s_id = agenda.s_id) INNER JOIN user ON (agenda.a_presenter = user.u_id) WHERE a_status = 'A'",
         "SELECT * FROM user WHERE u_id=?",
         "SELECT u1.u_name as sender_name, u2.u_name as receiver_name, u1.u_id as sender_id, u2.u_id as receiver_id,  u1.u_profilepic as sender_profilepic, u2.u_profilepic as receiver_profilepic, u1.u_status as sender_status, u2.u_status as receiver_status, cv_id FROM conversation INNER JOIN user u1 ON(u1.u_id = conversation.cv_sender) INNER JOIN user u2 ON(u2.u_id = conversation.cv_receiver) WHERE cv_sender = ? or cv_receiver = ?",
-        "SELECT u1.u_name as sender_name, u2.u_name as receiver_name, u1.u_id as sender_id, u2.u_id as receiver_id, u1.u_profilepic as sender_profilepic, u2.u_profilepic as receiver_profilepic,cm_content,cm_datetime,cm_file,chat_message.cv_id as cv_id FROM chat_message INNER JOIN user u1 ON(u1.u_id = chat_message.cm_sender) INNER JOIN user u2 ON(u2.u_id = chat_message.cm_receiver) WHERE cm_sender=? OR cm_receiver=? ORDER BY cm_datetime ASC",
-        "SELECT user.u_id as sender_id, user.u_name as sender_name, user.u_profilepic as sender_profilepic, ch_id, ch_content, ch_file, c_id from channel_message INNER JOIN user ON (user.u_id = channel_message.ch_sender_id) WHERE ch_status='A' ORDER BY ch_datetime ASC",
+        "SELECT u1.u_name as sender_name, u2.u_name as receiver_name, u1.u_id as sender_id, u2.u_id as receiver_id, u1.u_profilepic as sender_profilepic, u2.u_profilepic as receiver_profilepic,cm_content,cm_datetime,cm_file,chat_message.cv_id as cv_id FROM chat_message INNER JOIN user u1 ON(u1.u_id = chat_message.cm_sender) INNER JOIN user u2 ON(u2.u_id = chat_message.cm_receiver) WHERE chat_message.cm_status = 'A' AND cm_sender=? OR cm_receiver=?  ORDER BY cm_datetime ASC ",
+        "SELECT user.u_id as sender_id, user.u_name as sender_name, user.u_profilepic as sender_profilepic, ch_id, ch_content, ch_file, c_id, ch_datetime from channel_message INNER JOIN user ON (user.u_id = channel_message.ch_sender_id) WHERE ch_status='A' ORDER BY ch_datetime ASC",
         "SELECT * from meeting WHERE m_etime IS NULL AND m_owner_id !=?",
       ];
     
@@ -384,6 +390,7 @@ app.get("/home",(req,res) =>{
           channel_message:req.session.channel_message,
           meeting:req.session.meeting,
           alertMessage: req.flash('info'),
+          errorMessage:req.flash('danger')
         });
       });
     }
@@ -431,7 +438,7 @@ app.post('/addRoom',(req, res) => {
     
 
   });
-  req.session.alertMessage = 'Room created successfully!';
+  req.flash('info', 'Room created successfully!' );
   req.session.save();
   res.redirect("home");
 
@@ -493,32 +500,70 @@ app.post('/addMember',(req, res) => {
 });
 
 app.post('/addContact',(req, res) => {
-  
-  let data = {ct_email: req.body.ct_email, u_id:req.body.u_id ,ct_status:'A'};
-    let sql = "INSERT INTO contact SET ?";
-    let query = mysqlConnection.query(sql, data,(err, results) => {
-      if(err) throw err;
-      req.flash('info', 'Insert Contact Successfully!' );
-      res.redirect("back");
+  var ct_email = req.body.ct_email;
+  var u_id = req.body.u_id;
 
-    });
+  //check if email is same like the email of the user
+  let sql1 = "SELECT u_email FROM user WHERE u_id = ?";
+  let query1 = mysqlConnection.query(sql1, [u_id],(err1, rows) => {
+    if(err1) throw err1;
+    rows.forEach((row) => {
+      if(ct_email == row.u_email){
+        req.flash('danger', 'You cannot add yourself into contact list' );
+        res.redirect("back");
+      }
+      else{
+          //check if the contact is already exist
+          let sql2 = "SELECT * FROM contact WHERE ct_email=? AND u_id = ?";
+          let query2 = mysqlConnection.query(sql2, [ct_email,u_id],(err2, rows2) => {
+            if(err2) throw err2;
+            if(rows2 !=0){
+              req.flash('danger', 'Contact already exist!' );
+              res.redirect("back");
+            }
+            //check if the email is exist
+            else{
+                let sql3 = "SELECT * FROM user WHERE u_email=?";
+                let query3 = mysqlConnection.query(sql3, [ct_email],(err3, rows3) => {
+                  if(err3) throw err3;
+                  if(rows3==0){
+                    req.flash('danger', 'This email is not a registered email' );
+                    res.redirect("back");
+                  }
+                  else{
+                    let data = {ct_email: ct_email, u_id:u_id ,ct_status:'A'};
+                    let sql = "INSERT INTO contact SET ?";
+                    let query = mysqlConnection.query(sql, data,(err, results) => {
+                      if(err) throw err;
+                      req.flash('info', 'Insert Contact Successfully!' );
+                      res.redirect("back");
+
+                    });
+                  }  
+              })
+            }
+          })
+        }
+    })
+  })
+
 });
 
 app.post('/addChat',(req, res) => {
   let filePath;
-  
+  let current_time = moment().format("YYYY-MM-DD HH:mm:ss");
+  var cv_sender = req.body.sender;
+  var sender_name = req.body.u_name;
+  var cv_id = parseInt(req.body.cv_id);
+
   if (!req.files || Object.keys(req.files).length === 0) {
     filePath = null;
   }
   else{
     let sampleFile = req.files.chatFile;
     filePath= 'dist/file/' + sampleFile.name;
+    uploadFile(sampleFile);
   }
-
-  let current_time = moment().format("YYYY-MM-DD HH:mm:ss");
-  var cv_sender = req.body.sender;
-  var sender_name = req.body.u_name;
-  var cv_id = parseInt(req.body.cv_id);
 
   if (isNaN(cv_id) == true){
       let sql1 = "SELECT u_id FROM user WHERE u_name =?";
@@ -695,7 +740,7 @@ app.post('/addAgenda',(req, res) => {
   });
 });
 
-//when user submit form to addRoom 
+//when user submit form to edit Profile
 app.post('/editProfile',(req, res) => {
   let u_id = parseInt(req.body.u_id);
   let profileData = {u_name: req.body.u_name,u_gender: req.body.u_gender,u_dob: req.body.u_dob,u_phone: req.body.u_phone,u_email: req.body.u_email};
@@ -703,8 +748,33 @@ app.post('/editProfile',(req, res) => {
   let sql = "UPDATE user SET ? where u_id = ?";
     let query = mysqlConnection.query(sql,[profileData,u_id],(err, results) => {
       if(err) throw err;
+      req.flash('info', 'Update Profile Successfully!' );
       res.redirect("home");
     });
+});
+
+//when user submit form to edit Profile
+app.post('/changeProfilePic',(req, res) => {
+  let u_id = parseInt(req.body.u_id);
+  
+  let filePath;
+  
+  if (!req.files || Object.keys(req.files).length === 0) {
+    filePath = null;
+    req.flash('danger', 'No image selected' );
+    res.redirect("home");
+  }
+  else{
+    let sampleFile = req.files.u_profilepic;
+    filePath= 'dist/img/avatars/' + sampleFile.name;
+    uploadImage(sampleFile);
+    let sql = "UPDATE user SET u_profilepic = ? where u_id = ?";
+    let query = mysqlConnection.query(sql,[filePath,u_id],(err, results) => {
+      if(err) throw err;
+      req.flash('info', 'Change Profile Picture Successfully!' );
+      res.redirect("home");
+    });
+  }
 });
 
 //when user submit form to addRoom 
@@ -712,9 +782,6 @@ app.post('/editPassword',(req, res) => {
   let u_id = parseInt(req.body.u_id);
   let old_password = CryptoJS.MD5(req.body.old_pwd);
   let password = CryptoJS.MD5(req.body.password);
-
-  console.log(old_password.toString());
-  console.log(password.toString());
 
   let sql = "SELECT * FROM user where u_id = ?";
     let query = mysqlConnection.query(sql,u_id,(err, rows) => {
@@ -725,12 +792,13 @@ app.post('/editPassword',(req, res) => {
           let sql2 = "UPDATE user SET u_password =? WHERE u_id=?";
             let query2 = mysqlConnection.query(sql2,[password.toString(),u_id],(err2, results) => {
               if(err2) throw err2;
+              req.flash('info', 'Insert Schedule Successfully!' );
               res.status(200).send({ success: true });
-              console.log("Change password successfully!");
             });
         }
         else{
-          console.log("Password Incorrect!");
+          req.flash('danger', 'Current password entered is incorrect!' );
+          res.redirect("home");
         }
       });
     });
@@ -883,12 +951,43 @@ app.get("/clearHistory/:c_id", (req, res) => {
   });
 });
 
+app.get("/clearChat/:cv_id", (req, res) => {
+  const cv_id = parseInt(req.params.cv_id);
+  let sql1 = "SELECT cm_id FROM conversation INNER JOIN chat_message ON (chat_message.cv_id = conversation.cv_id)  WHERE conversation.cv_id ="+cv_id;
+  let query1 = mysqlConnection.query(sql1,(err1, rows) => {
+    if(err1) throw err1;
+
+  rows.forEach((row) => {
+    let sql2 = "UPDATE chat_message SET cm_status='I' WHERE cm_id=?";
+      let query2 = mysqlConnection.query(sql2,row.cm_id,(err2, results) => {
+        if(err2) throw err2;
+        req.flash('info', 'Clear Chat History Successfully!' );
+      });
+      
+  });
+  res.redirect('/home');
+    
+  });
+  
+});
+
 app.get("/deleteMember/:room_record_id", (req, res) => {
   const rr_id = parseInt(req.params.room_record_id); 
   let sql = "UPDATE room_record SET rr_status='I' WHERE rr_id ="+rr_id;
   let query = mysqlConnection.query(sql,(err, results) => {
     if(err) throw err;
     req.flash('info', 'Delete Member Successfully' );
+    res.redirect('back');
+  });
+});
+
+app.get("/leaveRoom/:r_id&:u_id", (req, res) => {
+  const r_id = parseInt(req.params.r_id);
+  const u_id = parseInt(req.params.u_id); 
+  let sql = "UPDATE room_record SET rr_status='I' WHERE r_id =? AND u_id=?";
+  let query = mysqlConnection.query(sql,[r_id,u_id],(err, results) => {
+    if(err) throw err;
+    req.flash('info', 'Leave Room Successfully' );
     res.redirect('back');
   });
 });
@@ -998,6 +1097,14 @@ app.post('/JoinGuestMeeting/addGuest',(req, res) => {
 
   let current_time = moment().format("YYYY-MM-DD HH:mm:ss");
   const room = req.body.roomId; 
+  const cameraOn = req.body.cameraOn;
+  var mp_type;
+  if (cameraOn == "true"){
+    mp_type ="video"
+  }
+  else{
+    mp_type ="audeo"
+  }
   var g_id;
   let guestData = {g_name: req.body.name, g_gender:req.body.gender,g_date:current_time};
     let sql1 = "INSERT INTO guest SET ?";
@@ -1007,7 +1114,7 @@ app.post('/JoinGuestMeeting/addGuest',(req, res) => {
       req.session.g_id = g_id;
       req.session.save();
 
-    let participantData = {mp_join_time:current_time,m_id:req.body.m_id,mp_type:'audio'};
+    let participantData = {mp_join_time:current_time,m_id:req.body.m_id,mp_type:mp_type};
     let sql2 = "INSERT into meeting_participant SET ? , mp_guest_id=?";
     let query = mysqlConnection.query(sql2, [participantData,g_id],(err, results) => {
       if(err) throw err;
@@ -1018,7 +1125,7 @@ app.post('/JoinGuestMeeting/addGuest',(req, res) => {
     });
     
     res.redirect(`/${room}`);
-    
+
     req.session.g_name = req.body.name;
     req.session.save();
 
@@ -1064,8 +1171,8 @@ app.get("/:room", (req, res) => {
       rows.forEach((row) => {
         var queries = [
           "SELECT m_id,m_code,m_stime,u_name as host_name,s_id,c_id,cv_id FROM meeting INNER JOIN user ON (user.u_id = meeting.m_owner_id) WHERE m_id =?",
-          "SELECT t1.*, t2.* from meeting_participant t1 INNER JOIN user t2 on t1.mp_u_id = t2.u_id WHERE m_id =? AND mp_leave_time IS NULL ORDER BY mp_join_time ASC",
-          "SELECT t1.*, t2.* from meeting_participant t1 INNER JOIN guest t2 on t1.mp_guest_id = t2.g_id WHERE m_id =? AND mp_leave_time IS NULL ORDER BY mp_join_time ASC",
+          "SELECT mp_id,mp_u_id,mp_join_time,mp_leave_time,mp_type, t2.u_name,t2.u_profilepic from meeting_participant t1 INNER JOIN user t2 on (t1.mp_u_id = t2.u_id) WHERE m_id =? AND mp_leave_time IS NULL AND mp_guest_id IS NULL ORDER BY mp_join_time ASC",
+          "SELECT mp_id,mp_guest_id,mp_join_time,mp_leave_time,mp_type, t2.g_name from meeting_participant t1 INNER JOIN guest t2 on (t1.mp_guest_id = t2.g_id) WHERE m_id =? AND mp_leave_time IS NULL AND mp_u_id IS NULL ORDER BY mp_join_time ASC",
           "SELECT user.u_id as sender_id, user.u_name as sender_name, user.u_profilepic as sender_profilepic, ch_id, ch_content, ch_file, c_id from channel_message INNER JOIN user ON (user.u_id = channel_message.ch_sender_id) WHERE c_id=? AND ch_status='A' ORDER BY ch_datetime ASC",
           "SELECT * FROM chat_message INNER JOIN user WHERE cv_id=? ORDER BY cm_datetime ASC"
         ];
@@ -1096,6 +1203,26 @@ app.get("/:room", (req, res) => {
 });
 
 io.on("connection", (socket) => {
+  
+  /*socket.emit('message','Welcome');
+  socket.broadcast.emit('message','A user has enter the page');
+  socket.on('disconnect',()=>{
+    io.emit('message','A user has left the page');
+  });
+
+  // listen for conversation message 
+  socket.on('conversationMessage', msg =>{
+    io.emit('message',msg);
+  });*/
+
+  socket.on('offer', (data) => {
+    socket.broadcast.emit('offer', data);
+  });
+
+  socket.on('initiate', () => {
+    io.emit('initiate');
+  });
+  
 
   socket.on("join-room", (roomId, userId) => {
     socket.join(roomId);
@@ -1119,6 +1246,7 @@ app.post('/insertChannelMessage',(req, res) => {
   else{
     let sampleFile = req.files.channelFile;
     filePath= 'dist/file/' + sampleFile.name;
+    uploadFile(sampleFile);
   }
   
   let current_time = moment().format("YYYY-MM-DD HH:mm:ss");
@@ -1162,32 +1290,51 @@ app.post('/insertChannelMessage',(req, res) => {
   let sql1 = "INSERT channel_message SET ?";
     let query1 = mysqlConnection.query(sql1,messageData,(err1, results) => {
       if(err1) throw err1;
-      req.session.alertMessage = "Insert Channel Message Successfully!";
+      req.flash('info', 'Insert Message Successfully!' );
       res.redirect("/home");
     });
 
 });
 
-app.get('/upload', function(req, res) {
-  let sampleFile;
-  let uploadPath;
+function uploadFile(sampleFile,req, res) {
+  /*let sampleFile;
+  
 
   if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send('No files were uploaded.');
+    //return res.status(400).send('No files were uploaded.');
+    return false;
   }
 
   // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-  sampleFile = req.files.File;
+  sampleFile = req.files.File;*/
+  let uploadPath;
   uploadPath = __dirname + '/public/dist/file/' + sampleFile.name;
 
   // Use the mv() method to place the file somewhere on your server
   sampleFile.mv(uploadPath, function(err) {
     if (err)
-      return res.status(500).send(err);
+      return false;
+      //return res.status(500).send(err);
 
-    res.send('File uploaded!');
+      //res.send('File uploaded!');
+      return true;
   });
-});
+};
+function uploadImage(sampleFile,req, res) {
+  let uploadPath;
+  uploadPath = __dirname + '/public/dist/img/avatars/' + sampleFile.name;
+
+  // Use the mv() method to place the file somewhere on your server
+  sampleFile.mv(uploadPath, function(err) {
+    if (err)
+      return false;
+      //return res.status(500).send(err);
+
+      //res.send('File uploaded!');
+      return true;
+  });
+};
+
 function generateNotification(r_id,attendees){
   let current_time = moment().format("YYYY-MM-DD HH:mm:ss");
   

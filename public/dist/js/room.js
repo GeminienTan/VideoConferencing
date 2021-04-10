@@ -5,7 +5,7 @@
 if (adapter.browserDetails.browser == 'firefox') {
   adapter.browserShim.shimGetDisplayMedia(window, 'screen');
 }
-const enabled = true;
+var enabled = true;
 const startButton = document.getElementById('shareButton');
 const myScreen = document.createElement("video");
 myScreen.addEventListener("resize", ev => {
@@ -28,6 +28,8 @@ startButton.addEventListener('click', () => {
     myScreenStream = stream;
     shareStop();
     addShareStream(myScreen, stream);
+    peer.call(userId, myscreenStream);
+    
     //call.peerConnection.getSenders()[1].replaceTrack(videoStreamTrack);
   });
 });
@@ -35,6 +37,7 @@ startButton.addEventListener('click', () => {
 const shareStop = () => {
   if (enabled == true) {
     setStopScreen();
+    enabled = false;
   } else {
     setPlayScreen();
   }
@@ -81,16 +84,16 @@ const showChat = () =>{
   $("#record").hide();
   $("#participant").hide();
 }
+const showWhiteBoard = () =>{
+  $("#board").toggle();
+  $("#screen").toggle();
+}
+
 const shareLink = (ROOM_ID) =>{
-  alert(ROOM_ID);
   var url = window.location.href;
-  alert(url);
-  
+  return url;
 }
 const leaveMeeting = (m_id,id,type) => {
-    alert(m_id);
-    alert(id);
-    alert(type);
     window.location.href = "/leaveMeeting/"+m_id+"&"+id+"&"+type;
 }
 
