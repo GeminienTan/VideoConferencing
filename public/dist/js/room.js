@@ -97,6 +97,15 @@ const leaveMeeting = (m_id,id,type) => {
     window.location.href = "/leaveMeeting/"+m_id+"&"+id+"&"+type;
 }
 
+window.addEventListener("beforeunload", function (e) {
+  var confirmationMessage = "\o/";
+
+  (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+                              //Webkit, Safari, Chrome
+  return confirmationMessage;
+  //window.location.href = "/leaveMeeting/"+m_id+"&"+id+"&"+type;
+});
+
 
 
 

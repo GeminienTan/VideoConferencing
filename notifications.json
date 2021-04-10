@@ -472,5 +472,29 @@
     "date": "2021-03-25 20:05:14",
     "status": "unread",
     "type": "chat"
+  },
+  {
+    "notification": "has just start a meeting at q1xdd ddd",
+    "from": "Tan Ying En",
+    "u_id": [
+      1,
+      2,
+      31
+    ],
+    "date": "2021-04-01 19:02:41",
+    "status": "unread",
+    "type": "video_call"
+  },
+  {
+    "notification": "has just start a meeting at q1xdd ddd",
+    "from": "Jane Chong",
+    "u_id": [
+      4,
+      2,
+      31
+    ],
+    "date": "2021-04-01 19:04:53",
+    "status": "unread",
+    "type": "video_call"
   }
 ]

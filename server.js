@@ -1137,7 +1137,16 @@ app.get("/leaveMeeting/:m_id&:id&:type", (req, res) => {
   const m_id = req.params.m_id;
   const id = req.params.id; 
   var sql;
-  if(type=="user"){
+  if(type =="host"){
+    let sql1 = "UPDATE meeting SET m_etime = ? where m_id = ? AND m_owner_id =? ";
+    let query1 = mysqlConnection.query(sql1,[current_time,m_id,id],(err1, results) => {
+      if(err1) throw err1;
+      console.log("Host end meeting");
+    });
+
+    sql = "UPDATE meeting_participant SET mp_leave_time = ? where m_id = ? AND mp_u_id =? ";
+  }
+  else if(type=="user"){
     sql = "UPDATE meeting_participant SET mp_leave_time = ? where m_id = ? AND mp_u_id =? ";
   }
   else if(type=="guest"){
@@ -1170,7 +1179,7 @@ app.get("/:room", (req, res) => {
     if(err) throw err;
       rows.forEach((row) => {
         var queries = [
-          "SELECT m_id,m_code,m_stime,u_name as host_name,s_id,c_id,cv_id FROM meeting INNER JOIN user ON (user.u_id = meeting.m_owner_id) WHERE m_id =?",
+          "SELECT m_id,m_code,m_stime,u_id as host_id, u_name as host_name,s_id,c_id,cv_id FROM meeting INNER JOIN user ON (user.u_id = meeting.m_owner_id) WHERE m_id =?",
           "SELECT mp_id,mp_u_id,mp_join_time,mp_leave_time,mp_type, t2.u_name,t2.u_profilepic from meeting_participant t1 INNER JOIN user t2 on (t1.mp_u_id = t2.u_id) WHERE m_id =? AND mp_leave_time IS NULL AND mp_guest_id IS NULL ORDER BY mp_join_time ASC",
           "SELECT mp_id,mp_guest_id,mp_join_time,mp_leave_time,mp_type, t2.g_name from meeting_participant t1 INNER JOIN guest t2 on (t1.mp_guest_id = t2.g_id) WHERE m_id =? AND mp_leave_time IS NULL AND mp_u_id IS NULL ORDER BY mp_join_time ASC",
           "SELECT user.u_id as sender_id, user.u_name as sender_name, user.u_profilepic as sender_profilepic, ch_id, ch_content, ch_file, c_id from channel_message INNER JOIN user ON (user.u_id = channel_message.ch_sender_id) WHERE c_id=? AND ch_status='A' ORDER BY ch_datetime ASC",

@@ -43,10 +43,12 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script>
       const ROOM_ID = "<%=roomId%>";
+      const host_id = "<%=meeting[0].host_id%>";
       const u_id = "<%=u_id%>";
       const u_name = "<%=u_name%>";
       const g_id = "<%=g_id%>";
       const g_name = "<%=g_name%>";
+
       
     </script>
   </head>
@@ -130,9 +132,15 @@
           <div class="main__controls__block">
             <div class="main__controls__button">
               <% 
-              if(u_id ){ %>
+              if(u_id ){ 
+                if(u_id = meeting[0].host_id){
+                %>
+                <span onclick="leaveMeeting('<%=meeting[0].m_id%>','<%=u_id%>','host')" class="leave_meeting">Leave Meeting</span>
+                <%}else {%>
+              
                 <span onclick="leaveMeeting('<%=meeting[0].m_id%>','<%=u_id%>','user')" class="leave_meeting">Leave Meeting</span>
               <%}
+              }
               if(g_id){ %>
                 <span onclick="leaveMeeting('<%=meeting[0].m_id%>','<%=g_id%>','guest')" class="leave_meeting">Leave Meeting</span>
               <%}%>
@@ -233,6 +241,7 @@
           <hr>
           <h5>Important!</h5>
           <p> To collaborate at the whiteboard, enter password "Meego". </p>
+          
 
 
         </div>
