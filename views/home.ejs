@@ -14,6 +14,9 @@
 		<link href="dist/css/tagsinput.css" type="text/css" rel="stylesheet" >
 		<!-- Favicon -->
 		<link href="dist/img/favicon.png" type="image/png" rel="icon">
+		
+
+
 
 	</head>
 	<body>
@@ -46,7 +49,7 @@
 									<div class="settings">
                                         <div class="search">
                                             <form class="form-inline position-relative">
-                                                <input type="search" class="form-control" id="conversations" placeholder="Search for room...">
+                                                <input type="search" class="form-control" id="searchRoom" placeholder="Search for room...">
                                                 <button type="button" class="btn btn-link loop"><i class="material-icons">search</i></button>
                                             </form>
                                             <button class="btn create" data-toggle="modal" data-target="#addRoom"><i class="material-icons">add</i></button>
@@ -187,7 +190,7 @@
 									<div id="discussions" class="tab-pane fade ">
 										<div class="search">
 											<form class="form-inline position-relative">
-												<input type="search" class="form-control" id="conversations" placeholder="Search for conversations...">
+												<input type="search" class="form-control" id="searchConversations" placeholder="Search for conversations...">
 												<button type="button" class="btn btn-link loop"><i class="material-icons">search</i></button>
 											</form>
 											<button class="btn create" data-toggle="modal" data-target="#addChat"><i class="material-icons">create</i></button>
@@ -203,9 +206,9 @@
 											
 
 											<div class="list-group" id="chats" role="tablist">
-												<% for (var i in conversation){
-													if(conversation[i].receiver_id == u_id){ %>
-													<a href="#list-chat" class="filterDiscussions all unread single" id="list-chat-list" data-toggle="list" role="tab">
+												<% for (var i in conversation){ %>
+													<% if(conversation[i].receiver_id == u_id){ %>
+													<a href="#list-chat-<%= conversation[i].cv_id %>" class="filterDiscussions all unread single" id="list-chat-list" data-toggle="list" role="tab">
 														<img class="avatar-md" src="<%= conversation[i].sender_profilepic %>" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
 														<% if(conversation[i].sender_status == 'A'){ %>
 															<div class="status">
@@ -224,7 +227,7 @@
 													</a>
 													<% }
 													else if(conversation[i].sender_id == u_id){ %>
-														<a href="#list-chat" class="filterDiscussions all unread single" id="list-chat-list" data-toggle="list" role="tab">
+														<a href="#list-chat-<%= conversation[i].cv_id %>" class="filterDiscussions all unread single" id="list-chat-list" data-toggle="list" role="tab">
 															<img class="avatar-md" src="<%= conversation[i].receiver_profilepic %>" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
 															
 															<% if(conversation[i].receiver_status == 'A'){ %>
@@ -242,21 +245,7 @@
 															</div>
 														</a>
 														<%} 
-												}%> 									
-												<a href="#list-chat" class="filterDiscussions all unread single" id="list-chat-list" data-toggle="list" role="tab">
-													<img class="avatar-md" src="dist/img/avatars/avatar-male-1.jpg" data-toggle="tooltip" data-placement="top" title="Michael" alt="avatar">
-													<div class="status">
-														<i class="material-icons offline">fiber_manual_record</i>
-													</div>
-													<div class="new bg-pink">
-														<span>+10</span>
-													</div>
-													<div class="data">
-														<h5>Michael Knudsen</h5>
-														<span>Sun</span>
-														<p>How can i improve my chances of getting a deposit?</p>
-													</div>
-												</a>									
+												}%>									
 											</div>
 										</div>
 									</div>
@@ -327,7 +316,7 @@
 								<div id="schedule" class="tab-pane fade ">
 									<div class="search">
 										<form class="form-inline position-relative">
-											<input type="search" class="form-control" id="conversations" placeholder="Search for schedule">
+											<input type="search" class="form-control" id="searchSchedule" placeholder="Search for schedule">
 											<button type="button" class="btn btn-link loop"><i class="material-icons">search</i></button>
 										</form>
 										<button class="btn create" data-toggle="modal" data-target="#addSchedule"><i class="material-icons">add</i></button>
@@ -341,7 +330,7 @@
 										<h1>Schedule</h1>
 										<div class="list-group" id="chats" role="tablist">
 											<% for (var i in schedule){%>
-												<a href="#list-agenda" class="filterDiscussions all single" id="list-agenda-list" data-toggle="list" role="tab">
+												<a href="#list-agenda-<%= schedule[i].s_id%>" class="filterDiscussions all single" id="list-agenda-list" data-toggle="list" role="tab">
 													<div class="data">
 														<h5><%= schedule[i].s_title %></h5>
 														<span><%= moment(schedule[i].s_date).format( 'DD MMM YYYY - ddd') %></span>
@@ -397,7 +386,6 @@
 													<form action="editProfile" method="POST">
 														<input type="hidden" value="<%= u_id %>" name="u_id">
 														<div class="content">
-															
 															<div class="parent">
 																<div class="field">
 																	<label for="name">Name <span>*</span></label>
@@ -411,21 +399,21 @@
 																<% if(account[0].u_gender == 'F'){ %>
 																	<div class="field">
 																		<label for="gender"> F</label>
-																		<input type="radio" id="gender" name="u_gender" value="F" checked>
+																		<input type="radio" name="u_gender" value="F" checked>
 																	</div>
 																	<div class="field">
 																		<label for="gender">M</label>
-																		<input type="radio" id="gender" name="u_gender" value="M" >
+																		<input type="radio" name="u_gender" value="M" >
 																	</div>	
 																<% } 
 																else{ %>
 																	<div class="field">
 																		<label for="gender"> F</label>
-																		<input type="radio" id="gender" name="u_gender" value="F" >
+																		<input type="radio" name="u_gender" value="F" >
 																	</div>
 																	<div class="field">
 																		<label for="gender">M</label>
-																		<input type="radio" id="gender" name="u_gender" value="M" checked>
+																		<input type="radio" name="u_gender" value="M" checked>
 																	</div>
 																<% } %> 
 															</div>
@@ -435,7 +423,7 @@
 															</div>
 															<div class="field">
 																<label for="phone">Phone Number <span>*</span></label>
-																<input type="text" class="form-control" id="email" name="u_phone" value="<%= account[0].u_phone %>" required>
+																<input type="text" class="form-control" id="phone" name="u_phone" value="<%= account[0].u_phone %>" required>
 															</div>
 															<div class="field">
 																<label for="email">Email <span>*</span></label>
@@ -593,25 +581,58 @@
 
 				<%- include('sidebar/addForms.ejs') %>
 
+				<% for( var i in conversation){ %>	
 				<div class="main">
 					<div class="tab-content" id="nav-tabContent">
 						<!-- Start of Babble -->
-						<div class="babble tab-pane fade" id="list-chat" role="tabpanel" aria-labelledby="list-chat-list">
+						<div class="babble tab-pane fade" id="list-chat-<%= conversation[i].cv_id %>" role="tabpanel" aria-labelledby="list-chat-list">
 							<!-- Start of Chat -->
 							<div class="chat" id="chat1">
 								<div class="top bg-primary text-white">
 									<div class="container">
+										
 										<div class="col-md-12">
 											<div class="inside">
-												<a href="#"><img class="avatar-xl" src="dist/img/avatars/avatar-male-1.jpg" data-toggle="tooltip" data-placement="top" title="Lean" alt="avatar"></a>
-												<div class="status">
-													<i class="material-icons offline">fiber_manual_record</i>
-												</div>
+												
+												<% if(conversation[i].receiver_id == u_id){ %>
+												<a href="#"><img class="avatar-xl" src="<%= conversation[i].sender_profilepic %>" data-toggle="tooltip" data-placement="top" title="Lean" alt="avatar"></a>
+												
+													<% if(conversation[i].sender_status == 'A'){ %>
+													<div class="status">
+														<i class="material-icons online">fiber_manual_record</i>
+													</div>
+													<%}
+													else{ %>
+														<div class="status">
+															<i class="material-icons offline">fiber_manual_record</i>
+														</div>
+													<% } %>
+
 												<div class="data">
-													<h3>Michael Knudsen</h3>
-													<span>Inactive</span>
+													<h3><%= conversation[i].sender_name %></h3>
 												</div>
-												<button class="btn connect d-md-block d-none" name="2"><i class="material-icons md-30">phone_in_talk</i></button>
+												<% }
+												
+												else if(conversation[i].sender_id == u_id){ %>
+													<a href="#"><img class="avatar-xl" src="<%= conversation[i].receiver_profilepic %>" data-toggle="tooltip" data-placement="top" title="Lean" alt="avatar"></a>
+												
+													<% if(conversation[i].receiver_status == 'A'){ %>
+													<div class="status">
+														<i class="material-icons online">fiber_manual_record</i>
+													</div>
+													<%}
+													else{ %>
+														<div class="status">
+															<i class="material-icons offline">fiber_manual_record</i>
+														</div>
+													<% } %>
+
+												<div class="data">
+													<h3><%= conversation[i].receiver_name %></h3>
+												</div>
+												<% } %>
+													
+												<button class="btn connect d-md-block d-none" name="2" onclick="location.href='/Call'"><i class="material-icons md-30">phone_in_talk</i></button>
 												<button class="btn connect d-md-block d-none" name="2"><i class="material-icons md-36">videocam</i></button>
 												<button class="btn d-md-block d-none"><i class="material-icons md-30">info</i></button>
 												<div class="dropdown">
@@ -627,83 +648,64 @@
 												</div>
 											</div>
 										</div>
+
 									</div>
 								</div>
 								<div class="content empty">
 									<div class="container">
 										<div class="col-md-12">
-                                                <div class="date">
-                                                    <hr>
-                                                    <span>Yesterday</span>
-                                                    <hr>
-                                                </div>
-                                                <div class="message">
-                                                    <img class="avatar-md" src="dist/img/avatars/avatar-male-1.jpg" data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
+											<% for(var j in message){ %>
+												
+												<% if(conversation[i].cv_id == message[j].cv_id){ %>
+													<% if(message[j].receiver_id == u_id){ %>
+                                                <div class="message ">
+                                                    <img class="avatar-md" src="<%= message[j].sender_profilepic%>" data-toggle="tooltip" data-placement="top" title="<%= message[j].sender_name%>" alt="avatar">
                                                     <div class="text-main">
-                                                        <div class="text-group border border-info ">
-                                                            <div class="text text-info">
-                                                                <p>We've got some killer ideas kicking about already.</p>
+                                                        <div class="text-group border border-info rounded">
+                                                            <div class="text text-info">			
+																<p><%= message[j].cm_content %></p>	
                                                             </div>
                                                         </div>
-                                                        <span>09:46 AM</span>
+														
+                                                        <span><%= moment(message[j].cm_datetime).format( 'DD MMM YYYY HH:mm') %></span>
                                                     </div>
                                                 </div>
-                                                <div class="message me">
-                                                    <div class="text-main">
-                                                        <div class="text-group me">
-                                                            <div class="text me">
-                                                                <p>Can't wait! How are we coming along with the client?</p>
-                                                            </div>
-                                                        </div>
-                                                        <span>11:32 AM</span>
-                                                    </div>
-                                                </div>
-                                                <div class="message">
-                                                    <img class="avatar-md" src="dist/img/avatars/avatar-male-1.jpg" data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
-                                                    <div class="text-main">
-                                                        <div class="text-group border border-info ">
-                                                            <div class="text text-info">
-                                                                <p>Coming along nicely, we've got a draft for the client quarries completed.</p>
-                                                            </div>
-                                                        </div>
-                                                        <span>02:56 PM</span>
-                                                    </div>
-                                                </div>
-                                                <div class="message me">
-                                                    <div class="text-main">
-                                                        <div class="text-group me">
-                                                            <div class="text me">
-                                                                <p>Roger that boss!</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="text-group me">
-                                                            <div class="text me">
-                                                                <p>I have already started gathering some stuff for the mood boards, excited to start!</p>
-                                                            </div>
-                                                        </div>
-                                                        <span>10:21 PM</span>
-                                                    </div>
-                                                </div>
-                                                <div class="message">
-                                                    <img class="avatar-md" src="dist/img/avatars/avatar-male-1.jpg" data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
-                                                    <div class="text-main">
-                                                        <div class="text-group border border-info ">
-                                                            <div class="text text-info">
-                                                                <p>Alright...</p>
-                                                            </div>
-                                                        </div>
-                                                        <span>10:56 PM</span>
-                                                    </div>
-                                                </div>
+													<% }
+													else if(message[j].sender_id == u_id){ %>
+														<div class="message me">
+															
+															<div class="text-main">
+																<div class="text-group me">
+																	<div class="text me">
+																		<p><%= message[j].cm_content %></p>
+																	</div>
+																</div>
+																<span><%= moment(message[j].cm_datetime).format( 'DD MMM YYYY HH:mm') %></span>
+															</div>
+															<img class="avatar-md" src="<%= message[j].sender_profilepic%>" data-toggle="tooltip" data-placement="top" title="Me" alt="avatar"> 
+														</div>			
+													<%}
+												}
+											} %>
 										</div>
 									</div>
 								</div>
+								
 								<div class="container">
 									<div class="col-md-12">
 										<div class="bottom">
-											<form class="position-relative w-100">
-												<textarea class="form-control" placeholder="Start typing for reply..." rows="1"></textarea>
-												<button class="btn emoticons"><i class="material-icons">insert_emoticon</i></button>
+											<form class="position-relative w-100" action="addChat" method="POST">
+												<input type="text" value="<%= conversation[i].cv_id %>" name="cv_id">
+												<input type="text" value="<%= u_id %>" name="sender" hidden>
+
+												<% if(conversation[i].receiver_id == u_id){ %>
+												<input type="text" value="<%= conversation[i].sender_id %>" name="receiver" hidden>	
+												<%} 
+												else if(conversation[i].sender_id == u_id)	{%>
+												<input type="text" value="<%= conversation[i].receiver_id %>" name="receiver" hidden>
+												<%}%>
+
+												<textarea class="form-control" placeholder="Start typing for reply..." rows="1" name="content"></textarea>
 												<button type="submit" class="btn send"><i class="material-icons">send</i></button>
 											</form>
 											<label>
@@ -715,34 +717,9 @@
 								</div>
 							</div>
 							<!-- End of Chat -->
-							<!-- Start of Call -->
-							<div class="call" id="call2">
-								<div class="content">
-									<div class="container ">
-										<div class="col-md-12">
-											<div class="inside">
-												<div class="panel">
-													<div class="participant">
-														<img class="avatar-xxl" src="dist/img/avatars/avatar-male-1.jpg" alt="avatar">
-														<span>Connecting</span>
-													</div>							
-													<div class="options">
-														<button class="btn option" data-toggle="tooltip" data-placement="top" title="Mic"><i class="material-icons md-30">mic</i></button>
-														<button class="btn option" data-toggle="tooltip" data-placement="top" title="Video Camera"><i class="material-icons md-30">videocam</i></button>
-                                                        <button class="btn option call-end" data-toggle="tooltip" data-placement="top" title="Close"><i class="material-icons md-30">call_end</i></button>
-                                                        <button class="btn option" data-toggle="tooltip" data-placement="top" title="Share Screen"><i class="material-icons md-30">screen_share</i></button>
-														<button class="btn option" data-toggle="tooltip" data-placement="top" title="Speaker"><i class="material-icons md-30">volume_up</i></button>
-													</div>
-													<button class="btn back" name="2"><i class="material-icons md-24">chat</i></button>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<!-- End of Call -->
 						</div>
-                        <!-- End of Babble -->
+						<% } %>
+						<!-- End of Babble -->
                         
 
 						<!-- Start of Babble -->
@@ -779,7 +756,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="content" id="content">
+								<div class="content">
 									<div class="container row">
 										<div class="col-md-12 ">
 											<div class="date">
@@ -861,10 +838,12 @@
 							</div>
 							<!-- End of Call -->
 						</div>
-						<% } 
-					}%>
-                        <!-- End of Babble -->
+							<% } 
+						}%>
+						
 						<% } %>
+                        <!-- End of Babble -->
+						
                         
 						<!-- Start of Babble -->
 						<div class="babble tab-pane fade" id="list-test" role="tabpanel" aria-labelledby="list-test-list">
@@ -903,7 +882,9 @@
                         <!-- End of Babble -->
 
                         <!-- Start of Babble -->
-						<div class="babble tab-pane fade" id="list-agenda" role="tabpanel" aria-labelledby="list-agenda-list">
+						<% for (var i in schedule){ %>
+
+						<div class="babble tab-pane fade" id="list-agenda-<%= schedule[i].s_id%>" role="tabpanel" aria-labelledby="list-agenda-list">
 							<!-- Start of Chat -->
 							<div class="chat" id="chat">
 								<div class="top bg-primary text-white ">
@@ -912,7 +893,7 @@
 											<div class="inside">
 												
 												<div class="data">
-													<h3>Meeting Agenda  </h3>
+													<h3>Meeting Agenda  - <%= schedule[i].s_title%></h3>
 												</div>
 												<div class="dropdown">
 													<button class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons md-30">more_vert</i></button>
@@ -926,116 +907,141 @@
 								</div>
 							<!-- End of Chat -->
 							</div>
+							
 							<div class="main order-md-2">
-								
-									<div class="">
-										<div class="col-md-12">
-											<div class="content">
-												<!-- Editable table -->
-												<div class="card">
-													<div class="card-body">
-													<div id="table" class="table-editable">
-														<span class="table-add float-right mb-3 mr-2"><a href="#!" class="text-success"><i class="fas fa-plus fa-2x" aria-hidden="true"></i></a></span>
+								<div class="">
+									<div class="col-md-12">
+										<div class="content">
+											<!-- Editable table -->
+											<div class="card">
+												<div class="card-body">
+												<div id="table" class="table-editable">
+													<span class="table-add float-right mb-3 mr-2"><a href="#!" class="text-success"><i class="fas fa-plus fa-2x" aria-hidden="true"></i></a></span>
 
-															<table class="table table-bordered table-responsive-md table-striped text-center">
-																<thead>
-																	<tr>
-																	<th class="text-center">Title</th>
-																	<td colspan="5" class="pt-3-half" contenteditable="true">Meeting 1 </td>
-																	</tr>
-																</thead>
-																<tbody>
-																	<tr>
-																	<th class="text-center">Date</th>
-																	<td colspan="" class="pt-3-half" contenteditable="true">9/9/2019</td>
-																	<th class="text-center">Time</th>
-																	<td colspan="" class="pt-3-half" contenteditable="true">1400</td>
-																	<th class="text-center">Location</th>
-																	<td colspan="" class="pt-3-half" contenteditable="true">Room 1</td>
-																	</tr>
-																	<!-- This is our clonable table line -->
-																	<tr>
-																		<th class="text-center">Objective</th>
-																		<td colspan="5" class="pt-3-half" contenteditable="true">To present the report of the assignment 1 </td>
-																	</tr>
-																	<!-- This is our clonable table line -->
-																	<tr>
-																		<th class="text-center">Objective</th>
-																		<td colspan="5" class="pt-3-half" contenteditable="true">Power Point Slide</td>
-																	</tr>
-																	<tr>
-																		<th class="text-center">Particants</th>
-																		<td colspan="5" class="pt-3-half" contenteditable="true">Rebecca , Winnie , Michael </td>
-																	</tr>
-																</tbody>
-															</table>
 														<table class="table table-bordered table-responsive-md table-striped text-center">
+															<thead>
+																<tr>
+																<th class="text-center">Title</th>
+																<td colspan="5" class="pt-3-half" contenteditable="true"><%= schedule[i].s_title%></td>
+																</tr>
+															</thead>
+															<tbody>
+																<tr>
+																<th class="text-center">Date</th>
+																<td colspan="" class="pt-3-half" contenteditable="true"><%= moment(schedule[i].s_date).format( 'DD MMM YYYY - ddd') %></td>
+																<th class="text-center">Start Time</th>
+																<td colspan="" class="pt-3-half" contenteditable="true"><%= schedule[i].s_stime  %></td>
+																<th class="text-center">End Time</th>
+																<td colspan="" class="pt-3-half" contenteditable="true"><%= schedule[i].s_etime %></td>
+																</tr>
+																<!-- Table line -->
+																<tr>
+																	<th class="text-center">Objective</th>
+																	<td colspan="5" class="pt-3-half" contenteditable="true"><%= schedule[i].s_objective %></td>
+																</tr>
+																
+																<tr>
+																	<th class="text-center">Participants</th>
+																	<td colspan="5" class="pt-3-half" contenteditable="true">
+																	
+																	<% for (var j in attendees){ 
+																		if(attendees[j].s_id == schedule[i].s_id ){ %> 
+																		<p display="block">	<%= attendees[j].u_name %> </p>
+																		<%}
+																	}%>
+																	</td>
+																</tr>
+																
+															</tbody>
+														</table>
+														<datalist id="time">
+															<option value="00:05">5 minutes</option>
+															<option value="00:10">10 minutes</option>
+															<option value="00:20">20 minutes</option>
+															<option value="00:30">30 minutes</option>
+															<option value="00:60">1 hour</option>
+														</datalist>
+														<datalist id="presenter-<%= schedule[i].s_id%>">
+															
+															<% for (var j in attendees){
+																if(attendees[j].s_id == schedule[i].s_id ){ %> 
+																	<option value="<%= attendees[j].u_name %>"><% attendees[j].u_name %></option>
+																	<%}
+																
+															}%>
+														</datalist>
+														<!--
+														<span class="table-remove"><button type="submit"
+															class="btn btn-primary bg-primary btn-rounded btn-sm my-0 add">Insert New Row</button>
+														</span>-->
+														<form action="Agenda" method="POST">
+														<table id="agenda" class="table-bordered table-responsive-md table-striped text-center" style="padding:0;">
+															<col style="width:2%">
+															<col>
+															<col style="width:20%">
+															<col style="width:10%">
+															<col style="width:10%">
 														<thead>
 															<tr>
 															<th class="text-center">#</th>
 															<th class="text-center">Topic</th>
 															<th class="text-center">Presenter </th>
 															<th class="text-center">Time Allocated</th>
-															<th class="text-center">Sort</th>
 															<th class="text-center">Delete</th>
 															</tr>
 														</thead>
 														<tbody>
+															
+															<% 
+															var x= 1
+															for (var k in agenda){
+																if(agenda[k].s_id == schedule[i].s_id ){ %>
+																
+																<tr>
+																	<td class="pt-3-half" contenteditable="true"><%= x %></td>
+																	<td class="pt-3-half" contenteditable="true"><%= agenda[k].a_topic %></td>
+																	<td class="pt-3-half" contenteditable="true"><%= agenda[k].presenter %></td>
+																	<td class="pt-3-half" contenteditable="true"><%= agenda[k].a_time_allocated %></td>
+																	<td>
+																		<span class="table-remove"><button type="submit"
+																			class="btn btn-danger btn-rounded btn-sm my-0 text-danger">Remove</button></span>
+																	</td>
+																</tr>
+																
+																<% x+=1 
+																}
+
+															}%>
+
 															<tr>
-															<td class="pt-3-half" contenteditable="true">1</td>
-															<td class="pt-3-half" contenteditable="true">Introduction</td>
-															<td class="pt-3-half" contenteditable="true">Rebecca</td>
-															<td class="pt-3-half" contenteditable="true">5 mins</td>
-															<td class="pt-3-half">
-																<span class="table-up"><a href="#!" class="text-dark"><i class="material-icons">arrow_upward</i></a></span>
-																<span class="table-down"><a href="#!" class="text-dark"><i class="material-icons">arrow_downward</i></a></span>
-															</td>
-															<td>
-																<span class="table-remove"><button type="button"
-																	class="btn btn-danger btn-rounded btn-sm my-0 text-danger">Remove</button></span>
-															</td>
+																<td></td>
+																<td><input type="text" name="a_topic" id="a_topic" style="width:100%"></td>
+																<td><select  name="a_presenter" id="a_presenter" style="width:100%;height: 28px;" >
+																	<% for (var j in attendees){
+																	if(attendees[j].s_id == schedule[i].s_id ){ %> 
+																		<option value="<%= attendees[j].u_name %>"><%= attendees[j].u_name %></option>
+																		<%}
+																	
+																}%></select></td>
+																<td><input name="a_time_allocated" id="a_time_allocated" list="time"></td>
+																<td><span><button type="submit" id="addAgenda" name="addAgenda" class="btn btn-info btn-rounded btn-sm my-0 text-info">Add</button></span></td>
 															</tr>
-															<!-- This is our clonable table line -->
-															<tr>
-																<td class="pt-3-half" contenteditable="true">2</td>
-																<td class="pt-3-half" contenteditable="true">Advantages and Disadvantages</td>
-																<td class="pt-3-half" contenteditable="true">Winnie</td>
-																<td class="pt-3-half" contenteditable="true">10 mins</td>
-																<td class="pt-3-half">
-																	<span class="table-up"><a href="#!" class="text-dark"><i class="material-icons">arrow_upward</i></a></span>
-																	<span class="table-down"><a href="#!" class="text-dark"><i class="material-icons">arrow_downward</i></a></span>
-																</td>
-																<td>
-																	<span class="table-remove"><button type="button"
-																		class="btn btn-danger btn-rounded btn-sm my-0 text-danger">Remove</button></span>
-																</td>
-																</tr>
-															<!-- This is our clonable table line -->
-															<tr>
-																<td class="pt-3-half" contenteditable="true">2</td>
-																<td class="pt-3-half" contenteditable="true">Tools Used</td>
-																<td class="pt-3-half" contenteditable="true">Michael</td>
-																<td class="pt-3-half" contenteditable="true">5 mins</td>
-																<td class="pt-3-half">
-																	<span class="table-up"><a href="#!" class="text-dark"><i class="material-icons">arrow_upward</i></a></span>
-																	<span class="table-down"><a href="#!" class="text-dark"><i class="material-icons">arrow_downward</i></a></span>
-																</td>
-																<td>
-																	<span class="table-remove"><button type="button"
-																		class="btn btn-danger btn-rounded btn-sm my-0 text-danger">Remove</button></span>
-																</td>
-																</tr>
-															<!-- This is our clonable table line -->
+
+															
+
 														</tbody>
 														</table>
-													</div>
-													</div>
+														</form>
+												</div>
 												</div>
 											</div>
 										</div>
 									</div>
-								
+								</div>
+							</div>	
 						</div>
+						
+						<% } %>
                         <!-- End of Babble -->
 						
 					</div>
@@ -1044,7 +1050,6 @@
 		</main>
 		<!-- Bootstrap/Swipe core JavaScript
 		================================================== -->
-		<!-- Placed at the end of the document so the pages load faster -->
 		<script src="dist/js/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 		<script>window.jQuery || document.write('<script src="dist/js/vendor/jquery-slim.min.js"><\/script>')</script>
 		<script src="dist/js/vendor/popper.min.js"></script>
@@ -1055,6 +1060,14 @@
 		<script>
 			function scrollToBottom(el) { el.scrollTop = el.scrollHeight; }
 			scrollToBottom(document.getElementById('content'));
+
+			$('table').on('focus', 'td', function() {
+				$(this).css('backgroundColor', '#B0BED9');
+			});
+			$('table').on('blur', 'td', function() {
+				$(this).css('backgroundColor', 'inherit');
+			});
+			
 		</script>
 	</body>
 

@@ -1,7 +1,7 @@
 const express = require("express");
 const mysql = require("mysql");
 const app = express();
-const session = require('express-session')
+const session = require('express-session');
 const server = require("http").Server(app);
 const io = require("socket.io")(server);
 const bodyParser = require('body-parser');
@@ -39,16 +39,29 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.set('trust proxy', 1) // trust first proxy
 
-app.use(session({
-  secret: 'keyboard cat',
-  resave: false,
+var sess = {
+  secret: 'secret',
+  resave: true,
   saveUninitialized: true,
-  cookie: { secure: true }
-}))
+  cookie: {}
+}
+
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+  sess.cookie.secure = true // serve secure cookies
+}
+
+app.use(session(sess))
+
 
 app.get("/", (req, res) => {
   //   res.redirect(`/${uuidV4()}`);
   res.render("index");
+});
+
+app.get("/Call", (req, res) => {
+  //   res.redirect(`/${uuidV4()}`);
+  res.render("call");
 });
 
 //when user click sign-up button
@@ -85,20 +98,21 @@ app.post('/home',(req, res) => {
     }
     rows.forEach((row) => {
       const u_id = row.u_id;
-      //sess.u_id = u_id;
+      req.session.u_id = u_id;
+      
       var queries = [
-        //"SELECT * FROM room INNER JOIN room_record ON (room.r_id = room_record.r_id) INNER JOIN channel ON (channel.r_id = room.r_id) INNER JOIN user ON (user.u_id = room_record.u_id) WHERE room_record.u_id= '4' OR room.r_owner_id ='4'",
-        //"SELECT * FROM room_record JOIN room ON (room.r_id = room_record.r_id) JOIN channel ON (channel.r_id = room.r_id) WHERE room_record.u_id= '4' OR room.r_owner_id ='4'",
         "SELECT user.u_id,u_name,u_profilepic,u_status,u_email FROM user INNER JOIN contact ON (contact.ct_email = user.u_email) WHERE contact.u_id =? AND contact.ct_status = 'A'",
         "SELECT room.r_id as r_id,c_title,c_desc,c_id FROM room LEFT JOIN room_record ON (room.r_id = room_record.r_id) INNER JOIN channel ON (channel.r_id = room.r_id) WHERE room_record.u_id=? OR room.r_owner_id =? AND room.r_status = 'A' AND channel.c_status ='A'",
         "SELECT room.r_id as r_id,r_title,r_desc FROM room LEFT JOIN room_record ON (room.r_id = room_record.r_id) WHERE room_record.u_id=? OR room.r_owner_id =? AND room.r_status = 'A'",
         "SELECT * FROM schedule WHERE s_status = 'A' AND u_id=?",
+        "SELECT s_id,user.u_name as u_name FROM attendees INNER JOIN user ON (user.u_id = attendees.u_id)",
+        "SELECT schedule.s_id as s_id, user.u_name as presenter, a_topic,a_time_allocated FROM agenda INNER JOIN schedule ON (schedule.s_id = agenda.s_id) INNER JOIN user ON (agenda.a_presenter = user.u_id)",
         "SELECT * FROM user WHERE u_id=?",
-        "SELECT u1.u_name as sender_name, u2.u_name as receiver_name, u1.u_id as sender_id, u2.u_id as receiver_id,  u1.u_profilepic as sender_profilepic, u2.u_profilepic as receiver_profilepic, u1.u_status as sender_status, u2.u_status as receiver_status FROM conversation INNER JOIN user u1 ON(u1.u_id = conversation.cv_sender) INNER JOIN user u2 ON(u2.u_id = conversation.cv_receiver) WHERE cv_sender = 4 or cv_receiver = 4",
-        "SELECT u1.u_name as sender_name, u2.u_name as receiver_name, u1.u_id as sender_id, u2.u_id as receiver_id, u1.u_profilepic as sender_profilepic, u2.u_profilepic as receiver_profilepic,cm_content,cm_datetime,cm_file FROM chat_message INNER JOIN user u1 ON(u1.u_id = chat_message.cm_sender) INNER JOIN user u2 ON(u2.u_id = chat_message.cm_receiver) WHERE cm_sender=? OR cm_receiver=? ORDER BY cm_datetime DESC",
+        "SELECT u1.u_name as sender_name, u2.u_name as receiver_name, u1.u_id as sender_id, u2.u_id as receiver_id,  u1.u_profilepic as sender_profilepic, u2.u_profilepic as receiver_profilepic, u1.u_status as sender_status, u2.u_status as receiver_status, cv_id FROM conversation INNER JOIN user u1 ON(u1.u_id = conversation.cv_sender) INNER JOIN user u2 ON(u2.u_id = conversation.cv_receiver) WHERE cv_sender = ? or cv_receiver = ?",
+        "SELECT u1.u_name as sender_name, u2.u_name as receiver_name, u1.u_id as sender_id, u2.u_id as receiver_id, u1.u_profilepic as sender_profilepic, u2.u_profilepic as receiver_profilepic,cm_content,cm_datetime,cm_file,chat_message.cv_id as cv_id FROM chat_message INNER JOIN user u1 ON(u1.u_id = chat_message.cm_sender) INNER JOIN user u2 ON(u2.u_id = chat_message.cm_receiver) WHERE cm_sender=? OR cm_receiver=? ORDER BY cm_datetime ASC",
       ];
     
-      mysqlConnection.query(queries.join(';'),[u_id,u_id,u_id,u_id,u_id,u_id,u_id,u_id,u_id],(err, results, fields) => {
+      mysqlConnection.query(queries.join(';'),[u_id,u_id,u_id,u_id,u_id,u_id,u_id,u_id,u_id,u_id,u_id],(err, results, fields) => {
     
         if (err) throw err;
 
@@ -106,19 +120,34 @@ app.post('/home',(req, res) => {
         console.log(results[1]);
         console.log(results[2]);
         console.log(results[3]);
-        console.log(results[4]);*/
+        console.log(results[4]);
         console.log(results[5]);
         console.log(results[6]);
+        console.log(results[7]);*/
+
+        req.session.contact = results[0];
+        req.session.channel = results[1];
+        req.session.room = results[2];
+        req.session.schedule = results[3];
+        req.session.attendees = results[4];
+        req.session.agenda = results[5];
+        req.session.account =results[6];
+        req.session.conversation = results[7];
+        req.session.message = results[8];
+        req.session.save();
+
         res.render('home', {
           u_id:u_id,
           moment: moment,
-          contact: results[0], 
-          channel: results[1], 
-          room: results[2],
-          schedule: results[3],
-          account: results[4],
-          conversation:results[5],
-          message:results[6],
+          contact: req.session.contact,
+          channel: req.session.channel, 
+          room: req.session.room,
+          schedule: req.session.schedule,
+          attendees: req.session.attendees,
+          agenda: req.session.agenda,
+          account:req.session.account,
+          conversation:req.session.conversation,
+          message:req.session.message,
         });
     
       });
@@ -127,6 +156,26 @@ app.post('/home',(req, res) => {
   });
 });
 
+app.get("/home", (req, res) => {
+  //   res.redirect(`/${uuidV4()}`);
+  if(!req.session.u_id) {
+    res.redirect('/');
+} else {
+  res.render('home', {
+    u_id:req.session.u_id,
+    moment: moment,
+    contact: req.session.contact,
+    channel: req.session.channel, 
+    room: req.session.room,
+    schedule: req.session.schedule,
+    attendees: req.session.attendees,
+    agenda: req.session.agenda,
+    account:req.session.account,
+    conversation:req.session.conversation,
+    message:req.session.message,
+  });
+}
+});
 //when user submit form to addRoom 
 app.post('/addRoom',(req, res) => {
   let roomData = {r_title: req.body.r_title, r_desc: req.body.r_desc,r_status:'A',r_owner_id: req.body.owner_id};
@@ -152,6 +201,7 @@ app.get("/join-guest", (req, res) => {
 });
 
 app.post('/addContact',(req, res) => {
+  
   let data = {ct_email: req.body.ct_email, u_id:req.body.u_id ,ct_status:'A'};
     let sql = "INSERT INTO contact SET ?";
     let query = mysqlConnection.query(sql, data,(err, results) => {
@@ -162,52 +212,64 @@ app.post('/addContact',(req, res) => {
 
 app.post('/addChat',(req, res) => {
   
-  
   let current_time = moment().format("YYYY-MM-DD HH:mm:ss");
-  console.log(current_time)
-  var cv_sender = parseInt(req.body.sender);
-  let sql1 = "SELECT u_id FROM user WHERE u_name =?";
-  let query1 = mysqlConnection.query(sql1,req.body.receiver ,(err, rows) => {
-    if(err) throw err;
-    rows.forEach((row) => {
-      var cv_receiver = row.u_id;
-      //console.log("receiver",cv_receiver);
-
-      let chatData = {cm_content: req.body.content,cm_file:'',cm_datetime:current_time,cm_receiver: cv_receiver,cm_sender: cv_sender,cm_status: 'A'};
-      
-      //create conversation
-      let sql2 = "SELECT cv_id FROM conversation WHERE (cv_receiver=? AND cv_sender=?) OR (cv_sender=? AND cv_receiver=?)";
-      let query2 = mysqlConnection.query(sql2,[cv_receiver,cv_sender,cv_receiver,cv_sender] ,(err, rows) => {
+  var cv_sender = req.body.sender;
+  var cv_id = parseInt(req.body.cv_id);
+  if (isNaN(cv_id) == true){
+      let sql1 = "SELECT u_id FROM user WHERE u_name =?";
+      let query1 = mysqlConnection.query(sql1,req.body.receiver ,(err, rows) => {
         if(err) throw err;
-        if(rows==0){
-          console.log("New conversation");
-          let sql2 = "INSERT into conversation SET cv_receiver=?,cv_sender=?";
-          let query2 = mysqlConnection.query(sql2,[cv_receiver,cv_sender] ,(err, results) => {
+        rows.forEach((row) => {
+          var cv_receiver = row.u_id;
+
+          let chatData = {cm_content: req.body.content,cm_file:'',cm_datetime:current_time,cm_receiver: cv_receiver,cm_sender: cv_sender,cm_status: 'A'};
+          
+          //create conversation
+          let sql2 = "SELECT cv_id FROM conversation WHERE (cv_receiver=? AND cv_sender=?) OR (cv_sender=? AND cv_receiver=?)";
+          let query2 = mysqlConnection.query(sql2,[cv_receiver,cv_sender,cv_receiver,cv_sender] ,(err, rows) => {
             if(err) throw err;
-            console.log("Insert conversation successfully");
-            
-            let sql3 = "INSERT into chat_message SET ? , cv_id= (SELECT MAX(cv_id) as cv_id from conversation)";
-            let query3 = mysqlConnection.query(sql3,chatData,(err, results) => {
-              if(err) throw err;
-              console.log("Insert message successfully with new conver");
+            if(rows==0){
+              console.log("New conversation");
+              let sql2 = "INSERT into conversation SET cv_receiver=?,cv_sender=?";
+              let query2 = mysqlConnection.query(sql2,[cv_receiver,cv_sender] ,(err, results) => {
+                if(err) throw err;
+                console.log("Insert conversation successfully");
+                
+                let sql3 = "INSERT into chat_message SET ? , cv_id= (SELECT MAX(cv_id) as cv_id from conversation)";
+                let query3 = mysqlConnection.query(sql3,chatData,(err, results) => {
+                  if(err) throw err;
+                  console.log("Insert message successfully with new conver");
+
+                });
+              });
+            }
+            rows.forEach((row) => {
+              cv_id = row.cv_id;
+              let sql4 = "INSERT into chat_message SET ? , cv_id= ?";
+                let query4 = mysqlConnection.query(sql4,[chatData,cv_id],(err, results) => {
+                  if(err) throw err;
+                  console.log("Insert message successfully with old conver");
+
+                });
 
             });
           });
-        }
-        rows.forEach((row) => {
-          const cv_id = row.cv_id;
-          console.log("cvid",cv_id);
-          let sql4 = "INSERT into chat_message SET ? , cv_id= ?";
+        });
+      });
+  }
+  else{
+    let chatData = {cm_content: req.body.content,cm_file:'',cm_datetime:current_time,cm_receiver: parseInt(req.body.receiver),cm_sender: parseInt(req.body.sender),cv_id:cv_id,cm_status: 'A'};
+    let sql5 = "INSERT into chat_message SET ?";
             let query4 = mysqlConnection.query(sql4,[chatData,cv_id],(err, results) => {
               if(err) throw err;
               console.log("Insert message successfully with old conver");
 
             });
+    console.log(chatData);
+  }
 
-        });
-      });
-    });
-  });
+  
+  
 
   
 
@@ -252,6 +314,19 @@ app.post('/addSchedule',(req, res) => {
   });
   //res.redirect('/home');
   
+});
+
+app.post('/Agenda',(req, res) => {
+  if(req.body.hasOwnProperty("addAgenda")){
+    console.log("butt1 clicked");
+  };
+  let data = {a_topic: req.body.a_topic, a_presenter:req.body.a_presenter ,a_time_allocated:req.body.a_time_allocated};
+  console.log(data); 
+  /*let sql = "INSERT INTO agenda SET ?";
+    let query = mysqlConnection.query(sql, data,(err, results) => {
+      if(err) throw err;
+      //res.redirect('/new');
+    });*/
 });
 
 //when user submit form to addRoom 

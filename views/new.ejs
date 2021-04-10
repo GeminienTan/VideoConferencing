@@ -668,6 +668,17 @@
 		<script>
 			function scrollToBottom(el) { el.scrollTop = el.scrollHeight; }
 			scrollToBottom(document.getElementById('content'));
+
+			$('.add').on('click', function() {
+				var html = '<tr id="add_Error">';
+				html += '<td></td>';
+				html += '<td><input type="text" name="a_topic" style="height:;width:100%"></td>';
+				html += '<td><input name="a_presenter" list="presenter-<%= schedule[i].s_id%>" style="height:;width:100%"></td>';
+				html += '<td><input name="a_time_allocated" list="time"></td>';
+				html += '<td><span class="table-remove"><button type="submit" id="addAgenda" class="btn btn-info btn-rounded btn-sm my-0 text-info">Add</button></span></td>';
+				html += '</tr>';
+				$('#agenda tbody').prepend(html);
+			});
 		</script>
 	</body>
 
