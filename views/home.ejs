@@ -6,37 +6,18 @@
 		<title>Video Conferencing Application</title>
 		<meta name="description" content="#">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<!-- Tags Input CSS-->
-		<link href="dist/css/tagsinput.css" type="text/css" rel="stylesheet" >
-		
 		<!-- Bootstrap core CSS -->
 		<link href="dist/css/lib/bootstrap.min.css" type="text/css" rel="stylesheet">
 		<!-- Swipe core CSS -->
 		<link href="dist/css/swipe.min.css" type="text/css" rel="stylesheet">
-		
+		<!-- Tags Input-->
+		<link href="dist/css/tagsinput.css" type="text/css" rel="stylesheet" >
 		<!-- Favicon -->
 		<link href="dist/img/favicon.png" type="image/png" rel="icon">
 
-		
-
-	  <!-- JavaScript -->
-		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" 
-		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" 
-		crossorigin="anonymous">
-		</script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" 
-		integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" 
-		crossorigin="anonymous">
-		</script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"
-		integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" 
-		crossorigin="anonymous">
-		</script>
-		<script src="dist/js/tagsinput.js"></script>
 	</head>
 	<body>
 		<main>
-            
 			<div class="layout">
 				<!-- Start of Navigation -->
 				<div class="navigation">
@@ -68,70 +49,45 @@
                                                 <input type="search" class="form-control" id="conversations" placeholder="Search for room...">
                                                 <button type="button" class="btn btn-link loop"><i class="material-icons">search</i></button>
                                             </form>
-                                            <button class="btn create" data-toggle="modal" data-target="#addNewRoom"><i class="material-icons">add</i></button>
+                                            <button class="btn create" data-toggle="modal" data-target="#addRoom"><i class="material-icons">add</i></button>
                                         </div>
 
 										<div class="categories" id="roomDetails">
 											<h1>Rooms</h1>
-											<!-- Start of My Account -->
+											
 											<div class="category discussions">
-												<a href="#" class="title collapsed" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-													<div class="data">
-														<h5>Room 1 </h5>
-														<p>Project 1 Discussion</p>
+												<% for (var i in room){ %>	
+													<a href="#" class="title collapsed" id="headingOne" data-toggle="collapse" data-target="#channel-<%= room[i].r_id %>" aria-expanded="true" aria-controls="collapseOne">
+														<div class="data">
+															<h5><%= room[i].r_title %></h5>
+															<p><%= room[i].r_desc %></p>
+														</div>
+														<i class="material-icons">keyboard_arrow_right</i>
+													</a>
+													<div class="collapse " id="channel-<%= room[i].r_id %>"  aria-labelledby="headingOne" data-parent="#roomDetails">
+														<div class="list-group border border-light" id="chats" role="tablist">
+															<% for(var j in channel){ %>
+																<% if(room[i].r_id == channel[j].r_id){ %>
+																	<a href="#chat-<%= channel[j].c_id %>" class="btn" id="list-chat-list" data-toggle="list" role="tab">
+																		<div class="data">
+																			<p><%= channel[j].c_title %></p>
+																		</div>
+																	</a>									
+																<% } 
+															}%>
+														</div>
 													</div>
-													<i class="material-icons">keyboard_arrow_right</i>
-												</a>
-												<div class="collapse" id="collapseOne" aria-labelledby="headingOne" data-parent="#roomDetails">
-													<div class="list-group content" id="chats" role="tablist">
-                                                        <a href="#list-open" class="filterDiscussions all read single" id="list-chat-list" data-toggle="list" role="tab">
-                                                           <div class="data">
-                                                                <h5>General</h5>
-                                                                <p>This is a default channel</p>
-                                                            </div>
-                                                        </a>									
-                                                        <a href="#list-open2" class="filterDiscussions all read single" id="list-open2-list" data-toggle="list" role="tab">
-                                                            <div class="data">
-                                                                <h5>Random</h5>
-                                                                <p>This is a random channel</p>
-                                                            </div>
-                                                        </a>									
-                                                    </div>
-												</div>
-                                            </div>
+													
+													<% } %>
 
-                                            <div class="category discussions">
-												<a href="#" class="title collapsed" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-													<div class="data">
-														<h5>Room 2 </h5>
-														<p>Stress Free Campaign 2020</p>
-													</div>
-													<i class="material-icons">keyboard_arrow_right</i>
-												</a>
-												<div class="collapse" id="collapseTwo" aria-labelledby="headingTwo" data-parent="#accordionSettings">
-													<div class="list-group content" id="chats" role="tablist">
-                                                        <a href="#list-open" class="filterDiscussions all read single" id="list-chat-list" data-toggle="list" role="tab">
-                                                           <div class="data">
-                                                                <h5>General</h5>
-                                                                <p>This is a default channel</p>
-                                                            </div>
-                                                        </a>									
-                                                        <a href="#list-open2" class="filterDiscussions all read single" id="list-open2-list" data-toggle="list" role="tab">
-                                                            <div class="data">
-                                                                <h5>AJK</h5>
-                                                                <p>This is a AJK channel</p>
-                                                            </div>
-                                                        </a>									
-                                                    </div>
-												</div>
+											
                                             </div>
-											<!-- End of Room -->
-											<!-- Start of Password Settings -->
 											<div class="category">
 												
 											</div>
-											<!-- End of Password Settings -->
-											<!-- Start of Notifications Settings -->
+											<!-- End of Room -->
+
+											
 										</div>
 									</div>
 								</div>
@@ -145,7 +101,7 @@
 											<input type="search" class="form-control" id="people" placeholder="Search for people...">
 											<button type="button" class="btn btn-link loop"><i class="material-icons">search</i></button>
 										</form>
-										<button class="btn create" data-toggle="modal" data-target="#addNewContact"><i class="material-icons">person_add</i></button>
+										<button class="btn create" data-toggle="modal" data-target="#addContact"><i class="material-icons">person_add</i></button>
 									</div>
 									<div class="list-group sort">
 										<button class="btn filterMembersBtn active show" data-toggle="list" data-filter="all">All</button>
@@ -155,122 +111,36 @@
 									<div class="contacts">
 										<h1>Contacts</h1>
 										<div class="list-group" id="contacts" role="tablist">
-											<a href="#" class="filterMembers all online contact" data-toggle="list">
-												<img class="avatar-md" src="dist/img/avatars/avatar-female-1.jpg" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
-												<div class="status">
-													<i class="material-icons online">fiber_manual_record</i>
-												</div>
-												<div class="data">
-													<h5>Janette Dalton</h5>
-													<p>Sofia, Bulgaria</p>
-												</div>
-												<div class="person-add">
-													<i class="material-icons">delete</i>
-												</div>
-											</a>
-											<a href="#" class="filterMembers all online contact" data-toggle="list">
-												<img class="avatar-md" src="dist/img/avatars/avatar-male-1.jpg" data-toggle="tooltip" data-placement="top" title="Michael" alt="avatar">
-												<div class="status">
-													<i class="material-icons online">fiber_manual_record</i>
-												</div>
-												<div class="data">
-													<h5>Michael Knudsen</h5>
-													<p>Washington, USA</p>
-												</div>
-												<div class="person-add">
-													<i class="material-icons">delete</i>
-												</div>
-											</a>
-											<a href="#" class="filterMembers all online contact" data-toggle="list">
-												<img class="avatar-md" src="dist/img/avatars/avatar-female-2.jpg" data-toggle="tooltip" data-placement="top" title="Lean" alt="avatar">
-												<div class="status">
-													<i class="material-icons online">fiber_manual_record</i>
-												</div>
-												<div class="data">
-													<h5>Lean Avent</h5>
-													<p>Shanghai, China</p>
-												</div>
-												<div class="person-add">
-													<i class="material-icons">delete</i>
-												</div>
-											</a>
-											<a href="#" class="filterMembers all online contact" data-toggle="list">
-												<img class="avatar-md" src="dist/img/avatars/avatar-male-2.jpg" data-toggle="tooltip" data-placement="top" title="Mariette" alt="avatar">
-												<div class="status">
-													<i class="material-icons online">fiber_manual_record</i>
-												</div>
-												<div class="data">
-													<h5>Mariette Toles</h5>
-													<p>Helena, Montana</p>
-												</div>
-												<div class="person-add">
-													<i class="material-icons">delete</i>
-												</div>
-											</a>
-											<a href="#" class="filterMembers all online contact" data-toggle="list">
-												<img class="avatar-md" src="dist/img/avatars/avatar-female-3.jpg" data-toggle="tooltip" data-placement="top" title="Harmony" alt="avatar">
-												<div class="status">
-													<i class="material-icons online">fiber_manual_record</i>
-												</div>
-												<div class="data">
-													<h5>Harmony Otero</h5>
-													<p>Indore, India</p>
-												</div>
-												<div class="person-add">
-													<i class="material-icons">delete</i>
-												</div>
-											</a>
-											<a href="#" class="filterMembers all offline contact" data-toggle="list">
-												<img class="avatar-md" src="dist/img/avatars/avatar-female-5.jpg" data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
-												<div class="status">
-													<i class="material-icons offline">fiber_manual_record</i>
-												</div>
-												<div class="data">
-													<h5>Keith Morris</h5>
-													<p>Chisinau, Moldova</p>
-												</div>
-												<div class="person-add">
-													<i class="material-icons">delete</i>
-												</div>
-											</a>
-											<a href="#" class="filterMembers all offline contact" data-toggle="list">
-												<img class="avatar-md" src="dist/img/avatars/avatar-male-3.jpg" data-toggle="tooltip" data-placement="top" title="Ryan" alt="avatar">
-												<div class="status">
-													<i class="material-icons offline">fiber_manual_record</i>
-												</div>
-												<div class="data">
-													<h5>Ryan Foster</h5>
-													<p>Oslo, Norway</p>
-												</div>
-												<div class="person-add">
-													<i class="material-icons">delete</i>
-												</div>
-											</a>
-											<a href="#" class="filterMembers all offline contact" data-toggle="list">
-												<img class="avatar-md" src="dist/img/avatars/avatar-male-4.jpg" data-toggle="tooltip" data-placement="top" title="Mildred" alt="avatar">
-												<div class="status">
-													<i class="material-icons offline">fiber_manual_record</i>
-												</div>
-												<div class="data">
-													<h5>Mildred Bennett</h5>
-													<p>London, United Kingdom</p>
-												</div>
-												<div class="person-add">
-													<i class="material-icons">delete</i>
-												</div>
-											</a>
+											<% for (var i in contact){%>
+												<a href="#" class="filterMembers all online contact" data-toggle="list">
+													<img class="avatar-md" src="<%= contact[i].u_profilepic %>" data-toggle="tooltip" data-placement="top" title="Michael" alt="avatar">
+													<div class="status">
+														<i class="material-icons online">fiber_manual_record</i>
+													</div>
+													<div class="data">
+														<h5><%= contact[i].u_name %></h5>
+														<p><%= contact[i].u_email %></p>
+													</div>
+													<div class="person-delete">
+														<i class="material-icons">delete</i>
+													</div>
+												</a>
+
+												<!--Here write if offline and online -->
+											<%} %> 
+
 										</div>
 									</div>
 								</div>
 								<!-- End of Contacts -->
-								<!-- Start of Discussions -->
+								<!-- Start of Discussions 
 								<div id="discussions" class="tab-pane fade ">
 									<div class="search">
 										<form class="form-inline position-relative">
 											<input type="search" class="form-control" id="conversations" placeholder="Search for conversations...">
 											<button type="button" class="btn btn-link loop"><i class="material-icons">search</i></button>
 										</form>
-										<button class="btn create" data-toggle="modal" data-target="#addNewChat"><i class="material-icons">create</i></button>
+										<button class="btn create" data-toggle="modal" data-target="#addChat"><i class="material-icons">create</i></button>
 									</div>
 									<div class="list-group sort">
 										<button class="btn filterDiscussionsBtn active show" data-toggle="list" data-filter="all">All</button>
@@ -310,8 +180,87 @@
 											</a>									
 										</div>
 									</div>
-								</div>
+								</div>-->
+
 								<!-- End of Discussions -->
+									<!-- Start of Discussions -->
+									<div id="discussions" class="tab-pane fade ">
+										<div class="search">
+											<form class="form-inline position-relative">
+												<input type="search" class="form-control" id="conversations" placeholder="Search for conversations...">
+												<button type="button" class="btn btn-link loop"><i class="material-icons">search</i></button>
+											</form>
+											<button class="btn create" data-toggle="modal" data-target="#addChat"><i class="material-icons">create</i></button>
+										</div>
+										
+										<div class="list-group sort">
+											<button class="btn filterDiscussionsBtn active show" data-toggle="list" data-filter="all">All</button>
+											<button class="btn filterDiscussionsBtn" data-toggle="list" data-filter="read">Read</button>
+											<button class="btn filterDiscussionsBtn" data-toggle="list" data-filter="unread">Unread</button>
+										</div>						
+										<div class="discussions">
+											<h1>Conversations</h1>
+											
+
+											<div class="list-group" id="chats" role="tablist">
+												<% for (var i in conversation){
+													if(conversation[i].receiver_id == u_id){ %>
+													<a href="#list-chat" class="filterDiscussions all unread single" id="list-chat-list" data-toggle="list" role="tab">
+														<img class="avatar-md" src="<%= conversation[i].sender_profilepic %>" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+														<% if(conversation[i].sender_status == 'A'){ %>
+															<div class="status">
+																<i class="material-icons online">fiber_manual_record</i>
+															</div>
+														<%}
+														else{ %>
+																<div class="status">
+																	<i class="material-icons offline">fiber_manual_record</i>
+																</div>
+														<% } %>
+														<div class="data">
+															
+															<h5><%= conversation[i].sender_name %></h5>
+														</div>
+													</a>
+													<% }
+													else if(conversation[i].sender_id == u_id){ %>
+														<a href="#list-chat" class="filterDiscussions all unread single" id="list-chat-list" data-toggle="list" role="tab">
+															<img class="avatar-md" src="<%= conversation[i].receiver_profilepic %>" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+															
+															<% if(conversation[i].receiver_status == 'A'){ %>
+															<div class="status">
+																<i class="material-icons online">fiber_manual_record</i>
+															</div>
+															<%}
+															else{ %>
+																<div class="status">
+																	<i class="material-icons offline">fiber_manual_record</i>
+																</div>
+															<% } %>
+															<div class="data">
+																<h5><%= conversation[i].receiver_name %></h5>
+															</div>
+														</a>
+														<%} 
+												}%> 									
+												<a href="#list-chat" class="filterDiscussions all unread single" id="list-chat-list" data-toggle="list" role="tab">
+													<img class="avatar-md" src="dist/img/avatars/avatar-male-1.jpg" data-toggle="tooltip" data-placement="top" title="Michael" alt="avatar">
+													<div class="status">
+														<i class="material-icons offline">fiber_manual_record</i>
+													</div>
+													<div class="new bg-pink">
+														<span>+10</span>
+													</div>
+													<div class="data">
+														<h5>Michael Knudsen</h5>
+														<span>Sun</span>
+														<p>How can i improve my chances of getting a deposit?</p>
+													</div>
+												</a>									
+											</div>
+										</div>
+									</div>
+									<!-- End of Discussions -->
 								<!-- Start of Notifications -->
 								<div id="notifications" class="tab-pane fade">
 									<div class="search">
@@ -381,52 +330,31 @@
 											<input type="search" class="form-control" id="conversations" placeholder="Search for schedule">
 											<button type="button" class="btn btn-link loop"><i class="material-icons">search</i></button>
 										</form>
-										<button class="btn create" data-toggle="modal" data-target="#addNewSchedule"><i class="material-icons">add</i></button>
+										<button class="btn create" data-toggle="modal" data-target="#addSchedule"><i class="material-icons">add</i></button>
 									</div>
 									<div class="list-group sort">
 										<button class="btn filterDiscussionsBtn active show" data-toggle="list" data-filter="all">All</button>
-										<button class="btn filterDiscussionsBtn" data-toggle="list" data-filter="read">Upcoming</button>
-										<button class="btn filterDiscussionsBtn" data-toggle="list" data-filter="unread">Past</button>
+										<button class="btn filterDiscussionsBtn" data-toggle="list" data-filter="upcoming">Upcoming</button>
+										<button class="btn filterDiscussionsBtn" data-toggle="list" data-filter="past">Past</button>
 									</div>						
 									<div class="discussions">
 										<h1>Schedule</h1>
 										<div class="list-group" id="chats" role="tablist">
-											<a href="#list-agenda" class="filterDiscussions all unread single" id="list-agenda-list" data-toggle="list" role="tab">
-												<div class="data">
-													<h5>Meeting 1</h5>
-													<span>2 Aug 2020 - Wed</span>
-													<p>Discussion about Assignment </p>
-													<p>Room 1</p>
-													<span>2 pm</span>
-												</div>
-											</a>									
-											<a href="#list-agenda" class="filterDiscussions all read single" id="list-agenda-list" data-toggle="list" role="tab">
-												<div class="data">
-													<h5>Meeting 2</h5>
-													<span>15 Aug 2020 - Tue</span>
-													<p>Discussion about Assignment </p>
-													<p>Room 2</p>
-													<span>10 am</span>
-												</div>
-											</a>	
-											<a href="#list-agenda" class="filterDiscussions all read single " id="list-agenda-list" data-toggle="list" role="tab">
-												<div class="data">
-													<h5>Meeting 3</h5>
-													<span>17 Aug 2020 - Thurs</span>
-													<p>Discussion about Assignment </p>
-													<p>Room 1</p>
-													<span>3 pm</span>
-												</div>
-											</a>									
-											<a href="#list-agenda" class="filterDiscussions all read single " id="list-agenda-list" data-toggle="list" role="tab">
-												<div class="data">
-													<h5>Meeting 4</h5>
-													<span>21 Aug 2020 - Mon</span>
-													<p>Discussion about Assignment </p>
-													<p>Room 2</p>
-													<span>2 pm</span>
-												</div>
-											</a>									
+											<% for (var i in schedule){%>
+												<a href="#list-agenda" class="filterDiscussions all single" id="list-agenda-list" data-toggle="list" role="tab">
+													<div class="data">
+														<h5><%= schedule[i].s_title %></h5>
+														<span><%= moment(schedule[i].s_date).format( 'DD MMM YYYY - ddd') %></span>
+														<p></p>
+														<p></p>
+														<span><%= schedule[i].s_stime %></span>
+													</div>
+												</a>
+
+												<!--here write if past and upcoming-->
+											<%} %> 
+																				
+																			
 										</div>
 									</div>
 								</div>
@@ -435,20 +363,20 @@
 								<div class="tab-pane fade" id="settings">			
 									<div class="settings">
 										<div class="profile">
-											<img class="avatar-xl" src="dist/img/avatars/avatar-female-6.jpg" alt="avatar">
-											<h1><a href="#">Katy Perry</a></h1>
-											<span>katyp@gmail.com</span>
+											<img class="avatar-xl" src="<%= account[0].u_profilepic %>" alt="avatar">
+											<h1><a href="#"><%= account[0].u_name %></a></h1>
+											<span><%= account[0].u_email %></span>
 											<div class="stats">
 												<div class="item">
-													<h2>6</h2>
+													<h2><%= contact.length %></h2>
 													<h3>Contacts</h3>
 												</div>
 												<div class="item">
-													<h2>2</h2>
+													<h2><%= room.length %></h2>
 													<h3>Rooms</h3>
 												</div>
 												<div class="item">
-													<h2>12</h2>
+													<h2><%= account[0].u_point %></h2>
 													<h3>Points</h3>
 												</div>
 											</div>
@@ -457,7 +385,7 @@
 											<h1>Settings</h1>
 											<!-- Start of My Account -->
 											<div class="category">
-												<a href="#" class="title collapsed" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+												<a href="#" class="title collapsed" id="headingOne" data-toggle="collapse" data-target="#editProfile" aria-expanded="true" aria-controls="collapseOne">
 													<i class="material-icons md-30 online">person_outline</i>
 													<div class="data">
 														<h5>My Account</h5>
@@ -465,53 +393,53 @@
 													</div>
 													<i class="material-icons">keyboard_arrow_right</i>
 												</a>
-												<div class="collapse" id="collapseOne" aria-labelledby="headingOne" data-parent="#accordionSettings">
-													<div class="content">
-														<div class="upload">
-															<div class="data">
-																<img class="avatar-xl" src="dist/img/avatars/avatar-female-6.jpg" alt="image">
-																<label>
-																	<input type="file">
-																	<span class="btn button">Change Profile Picture</span>
-																</label>
-															</div>
-															<p>For best results, use an image at least 256px by 256px in either .jpg or .png format!</p>
-														</div>
-														<form>
+												<div class="collapse" id="editProfile" aria-labelledby="headingOne" data-parent="#accordionSettings">
+													<form action="editProfile" method="POST">
+														<input type="hidden" value="<%= u_id %>" name="u_id">
+														<div class="content">
+															
 															<div class="parent">
 																<div class="field">
-																	<label for="firstName">First name <span>*</span></label>
-																	<input type="text" class="form-control" id="firstName" placeholder="First name" value="Perry" required>
-																</div>
-																<div class="field">
-																	<label for="lastName">Last name <span>*</span></label>
-																	<input type="text" class="form-control" id="lastName" placeholder="Last name" value="Katy" required>
+																	<label for="name">Name <span>*</span></label>
+																	<input type="text" class="form-control" id="name" name="u_name" value="<%= account[0].u_name %>"  required>
 																</div>
 															</div>
 															<div class="parent">
 																<div class="field">
 																	<label for="gender">Gender : </label>
 																</div>
-																<div class="field">
-																	<label for="firstName"> Female</label>
-																	<input type="radio" id="firstName" name="gender" value="female" checked>
-																</div>
-																<div class="field">
-																	<label for="lastName">Male</label>
-																	<input type="radio" id="lastName" name="gender" value="male" >
-																</div>
+																<% if(account[0].u_gender == 'F'){ %>
+																	<div class="field">
+																		<label for="gender"> F</label>
+																		<input type="radio" id="gender" name="u_gender" value="F" checked>
+																	</div>
+																	<div class="field">
+																		<label for="gender">M</label>
+																		<input type="radio" id="gender" name="u_gender" value="M" >
+																	</div>	
+																<% } 
+																else{ %>
+																	<div class="field">
+																		<label for="gender"> F</label>
+																		<input type="radio" id="gender" name="u_gender" value="F" >
+																	</div>
+																	<div class="field">
+																		<label for="gender">M</label>
+																		<input type="radio" id="gender" name="u_gender" value="M" checked>
+																	</div>
+																<% } %> 
 															</div>
 															<div class="field">
-																<label for="location">Birthday</label>
-																<input type="date" class="form-control" id="birthday" value ="1996-07-06"required>
+																<label for="birthday">Birthday</label>
+																<input type="date" class="form-control" id="birthday" name="u_dob" value ="<%= moment(account[0].u_dob).format( 'YYYY-MM-DD') %>"required>
 															</div>
 															<div class="field">
-																<label for="text">Phone Number <span>*</span></label>
-																<input type="email" class="form-control" id="email" placeholder="Enter your phone number." value="011-1234567" required>
+																<label for="phone">Phone Number <span>*</span></label>
+																<input type="text" class="form-control" id="email" name="u_phone" value="<%= account[0].u_phone %>" required>
 															</div>
 															<div class="field">
 																<label for="email">Email <span>*</span></label>
-																<input type="email" class="form-control" id="email" placeholder="Enter your email address" value="happyday@gmail.com" required>
+																<input type="email" class="form-control" id="email" name="u_email" value="<%= account[0].u_email %>" required>
 															</div>
 															
 															<button class="btn btn-link w-100">Delete Account</button>
@@ -521,17 +449,43 @@
 												</div>
 											</div>
 											<!-- End of My Account -->
-											<!-- Start of Password Settings -->
+											<!-- Start of Profile Picture -->
 											<div class="category">
-												<a href="#" class="title collapsed" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseThree">
-													<i class="material-icons md-30 online">lock</i>
+												<a href="#" class="title collapsed" id="headingTwo" data-toggle="collapse" data-target="#editPhoto" aria-expanded="true" aria-controls="collapseThree">
+													<i class="material-icons md-30 online">photo</i>
 													<div class="data">
-														<h5>Password</h5>
-														<p>change current password</p>
+														<h5>Profile Picture</h5>
+														<p>Change current profile picture</p>
 													</div>
 													<i class="material-icons">keyboard_arrow_right</i>
 												</a>
-												<div class="collapse" id="collapseTwo" aria-labelledby="headingTwo" data-parent="#accordionSettings">
+												<div class="collapse" id="editPhoto" aria-labelledby="headingTwo" data-parent="#accordionSettings">
+													<div class="content">
+														<div class="upload">
+															<div class="data">
+																<img class="avatar-xl" src="<%= account[0].u_profilepic %>" alt="image">
+																<label>
+																	<input type="file" id="profilepic" name="u_profilepic">
+																	<span class="btn button">Change Profile Picture</span>
+																</label>
+															</div>
+															<p>For best results, use an image at least 256px by 256px in either .jpg or .png format!</p>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- End of Password Settings -->
+											<!-- Start of Password Settings -->
+											<div class="category">
+												<a href="#" class="title collapsed" id="headingThree" data-toggle="collapse" data-target="#editPassword" aria-expanded="true" aria-controls="collapseThree">
+													<i class="material-icons md-30 online">lock</i>
+													<div class="data">
+														<h5>Password</h5>
+														<p>Change current password</p>
+													</div>
+													<i class="material-icons">keyboard_arrow_right</i>
+												</a>
+												<div class="collapse" id="editPassword" aria-labelledby="headingThree" data-parent="#accordionSettings">
 													<div class="content">
 														<div class="field">
 															<label for="password">Enter Current Password</label>
@@ -550,17 +504,17 @@
 												</div>
 											</div>
 											<!-- End of Password Settings -->
-											<!-- Start of Notifications Settings -->
+											<!-- Start of Account Settings -->
 											<div class="category">
-												<a href="#" class="title collapsed" id="headingThree" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-													<i class="material-icons md-30 online">notifications_none</i>
+												<a href="#" class="title collapsed" id="headingFour" data-toggle="collapse" data-target="#editNotification" aria-expanded="true" aria-controls="collapseThree">
+													<i class="material-icons md-30 online">settings</i>
 													<div class="data">
-														<h5>Notifications</h5>
-														<p>Turn notifications on or off</p>
+														<h5>Settings</h5>
+														<p>General account settings</p>
 													</div>
 													<i class="material-icons">keyboard_arrow_right</i>
 												</a>
-												<div class="collapse" id="collapseThree" aria-labelledby="headingThree" data-parent="#accordionSettings">
+												<div class="collapse" id="editNotification" aria-labelledby="headingFour" data-parent="#accordionSettings">
 													<div class="content no-layer">
 														<div class="set">
 															<div class="details">
@@ -573,20 +527,6 @@
 															</label>
 														</div>
 													</div>
-												</div>
-											</div>
-											<!-- End of Notifications Settings -->
-											<!-- Start of Status Settings -->
-											<div class="category">
-												<a href="#" class="title collapsed" id="headingFour" data-toggle="collapse" data-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
-													<i class="material-icons md-30 online">visibility</i>
-													<div class="data">
-														<h5>Status</h5>
-														<p>Turn status on or off</p>
-													</div>
-													<i class="material-icons">keyboard_arrow_right</i>
-												</a>
-												<div class="collapse" id="collapseFour" aria-labelledby="headingFour" data-parent="#accordionSettings">
 													<div class="content no-layer">
 														<div class="set">
 															<div class="details">
@@ -601,11 +541,11 @@
 													</div>
 												</div>
 											</div>
-											<!-- End of Status Settings -->
+											<!-- End of Account Settings -->
 
 											<!-- Start of Speed Test -->
 											<div class="category">
-												<a href="#" class="title collapsed" id="headingFive" data-toggle="collapse" data-target="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
+												<a href="#" class="title collapsed" id="headingFive" data-toggle="collapse" data-target="#speedTest" aria-expanded="true" aria-controls="collapseFive">
 													<i class="material-icons md-30 online">network_check</i>
 													<div class="data">
 														<h5>Speed Test</h5>
@@ -613,27 +553,25 @@
 													</div>
 													<i class="material-icons">keyboard_arrow_right</i>
 												</a>
-												<div class="collapse" id="collapseFive" aria-labelledby="headingFive" data-parent="#accordionSettings">
+												<div class="collapse" id="speedTest" aria-labelledby="headingFive" data-parent="#accordionSettings">
 													<div class="content no-layer">
 														<div class="set">
 															<div class="details">
 																<h5>Speed Test</h5>
 																	<p>You can check your Internet speed before a meeting </p>
 															</div>
-															<a href="#list-test" class="filterDiscussions all read single" id="list-test-list" data-toggle="list" role="tab">
+															<a href="#list-test" class="" id="list-test-list" data-toggle="list" role="tab">
 																<span class="btn button">Start</span>
 															</a>
 														</div>
 													</div>
 												</div>
 											</div>
-
-											
 											<!-- End of Speed Test -->
 											
 											<!-- Start of Logout -->
 											<div class="category">
-												<a href="sign-in.html" class="title collapsed">
+												<a href="index" class="title collapsed">
 													<i class="material-icons md-30 online">power_settings_new</i>
 													<div class="data">
 														<h5>Power Off</h5>
@@ -651,13 +589,458 @@
 						</div>
 					</div>
 				</div>
-				
-                <%- include('sidebar/addForms.ejs') %>
-                
+				<!-- End of Sidebar -->
 
+				<%- include('sidebar/addForms.ejs') %>
+
+				<div class="main">
+					<div class="tab-content" id="nav-tabContent">
+						<!-- Start of Babble -->
+						<div class="babble tab-pane fade" id="list-chat" role="tabpanel" aria-labelledby="list-chat-list">
+							<!-- Start of Chat -->
+							<div class="chat" id="chat1">
+								<div class="top bg-primary text-white">
+									<div class="container">
+										<div class="col-md-12">
+											<div class="inside">
+												<a href="#"><img class="avatar-xl" src="dist/img/avatars/avatar-male-1.jpg" data-toggle="tooltip" data-placement="top" title="Lean" alt="avatar"></a>
+												<div class="status">
+													<i class="material-icons offline">fiber_manual_record</i>
+												</div>
+												<div class="data">
+													<h3>Michael Knudsen</h3>
+													<span>Inactive</span>
+												</div>
+												<button class="btn connect d-md-block d-none" name="2"><i class="material-icons md-30">phone_in_talk</i></button>
+												<button class="btn connect d-md-block d-none" name="2"><i class="material-icons md-36">videocam</i></button>
+												<button class="btn d-md-block d-none"><i class="material-icons md-30">info</i></button>
+												<div class="dropdown">
+													<button class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons md-30">more_vert</i></button>
+													<div class="dropdown-menu dropdown-menu-right">
+														<button class="dropdown-item connect" name="1"><i class="material-icons">phone_in_talk</i>Voice Call</button>
+														<button class="dropdown-item connect" name="1"><i class="material-icons">videocam</i>Video Call</button>
+														<hr>
+														<button class="dropdown-item"><i class="material-icons">clear</i>Clear History</button>
+														<button class="dropdown-item"><i class="material-icons">block</i>Block Contact</button>
+														<button class="dropdown-item"><i class="material-icons">delete</i>Delete Contact</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="content empty">
+									<div class="container">
+										<div class="col-md-12">
+                                                <div class="date">
+                                                    <hr>
+                                                    <span>Yesterday</span>
+                                                    <hr>
+                                                </div>
+                                                <div class="message">
+                                                    <img class="avatar-md" src="dist/img/avatars/avatar-male-1.jpg" data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
+                                                    <div class="text-main">
+                                                        <div class="text-group border border-info ">
+                                                            <div class="text text-info">
+                                                                <p>We've got some killer ideas kicking about already.</p>
+                                                            </div>
+                                                        </div>
+                                                        <span>09:46 AM</span>
+                                                    </div>
+                                                </div>
+                                                <div class="message me">
+                                                    <div class="text-main">
+                                                        <div class="text-group me">
+                                                            <div class="text me">
+                                                                <p>Can't wait! How are we coming along with the client?</p>
+                                                            </div>
+                                                        </div>
+                                                        <span>11:32 AM</span>
+                                                    </div>
+                                                </div>
+                                                <div class="message">
+                                                    <img class="avatar-md" src="dist/img/avatars/avatar-male-1.jpg" data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
+                                                    <div class="text-main">
+                                                        <div class="text-group border border-info ">
+                                                            <div class="text text-info">
+                                                                <p>Coming along nicely, we've got a draft for the client quarries completed.</p>
+                                                            </div>
+                                                        </div>
+                                                        <span>02:56 PM</span>
+                                                    </div>
+                                                </div>
+                                                <div class="message me">
+                                                    <div class="text-main">
+                                                        <div class="text-group me">
+                                                            <div class="text me">
+                                                                <p>Roger that boss!</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="text-group me">
+                                                            <div class="text me">
+                                                                <p>I have already started gathering some stuff for the mood boards, excited to start!</p>
+                                                            </div>
+                                                        </div>
+                                                        <span>10:21 PM</span>
+                                                    </div>
+                                                </div>
+                                                <div class="message">
+                                                    <img class="avatar-md" src="dist/img/avatars/avatar-male-1.jpg" data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
+                                                    <div class="text-main">
+                                                        <div class="text-group border border-info ">
+                                                            <div class="text text-info">
+                                                                <p>Alright...</p>
+                                                            </div>
+                                                        </div>
+                                                        <span>10:56 PM</span>
+                                                    </div>
+                                                </div>
+										</div>
+									</div>
+								</div>
+								<div class="container">
+									<div class="col-md-12">
+										<div class="bottom">
+											<form class="position-relative w-100">
+												<textarea class="form-control" placeholder="Start typing for reply..." rows="1"></textarea>
+												<button class="btn emoticons"><i class="material-icons">insert_emoticon</i></button>
+												<button type="submit" class="btn send"><i class="material-icons">send</i></button>
+											</form>
+											<label>
+												<input type="file">
+												<span class="btn attach d-sm-block d-none"><i class="material-icons">attach_file</i></span>
+											</label> 
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End of Chat -->
+							<!-- Start of Call -->
+							<div class="call" id="call2">
+								<div class="content">
+									<div class="container ">
+										<div class="col-md-12">
+											<div class="inside">
+												<div class="panel">
+													<div class="participant">
+														<img class="avatar-xxl" src="dist/img/avatars/avatar-male-1.jpg" alt="avatar">
+														<span>Connecting</span>
+													</div>							
+													<div class="options">
+														<button class="btn option" data-toggle="tooltip" data-placement="top" title="Mic"><i class="material-icons md-30">mic</i></button>
+														<button class="btn option" data-toggle="tooltip" data-placement="top" title="Video Camera"><i class="material-icons md-30">videocam</i></button>
+                                                        <button class="btn option call-end" data-toggle="tooltip" data-placement="top" title="Close"><i class="material-icons md-30">call_end</i></button>
+                                                        <button class="btn option" data-toggle="tooltip" data-placement="top" title="Share Screen"><i class="material-icons md-30">screen_share</i></button>
+														<button class="btn option" data-toggle="tooltip" data-placement="top" title="Speaker"><i class="material-icons md-30">volume_up</i></button>
+													</div>
+													<button class="btn back" name="2"><i class="material-icons md-24">chat</i></button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End of Call -->
+						</div>
+                        <!-- End of Babble -->
+                        
+
+						<!-- Start of Babble -->
+						<% for (var i in room){ %>	
+							<% for(var j in channel){ %>
+								<% if(room[i].r_id == channel[j].r_id){ %>								
+	
+						<div class="babble tab-pane fade " id="chat-<%= channel[j].c_id %>" role="tabpanel" aria-labelledby="list-open-list">
+							<!-- Start of Chat -->
+							<div class="chat" id="chat3">
+								<div class="top bg-primary text-white ">
+									<div class="container ">
+										<div class="col-md-12">
+											<div class="inside">
+												
+												<div class="data">
+													<h3><%= channel[j].c_title %></h3>
+													<span><%= channel[j].c_desc %></span>
+												</div>
+												<button class="btn connect d-md-block d-none" name="3"><i class="material-icons md-30">phone_in_talk</i></button>
+												<button class="btn connect d-md-block d-none" name="3"><i class="material-icons md-36">videocam</i></button>
+												<button class="btn d-md-block d-none"><i class="material-icons md-30">info</i></button>
+												<div class="dropdown">
+													<button class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons md-30">more_vert</i></button>
+													<div class="dropdown-menu dropdown-menu-right">
+														<button class="dropdown-item connect" name="3"><i class="material-icons">phone_in_talk</i>Voice Call</button>
+														<button class="dropdown-item connect" name="3"><i class="material-icons">videocam</i>Video Call</button>
+														<hr>
+                                                        <button class="dropdown-item"><i class="material-icons">clear</i>Clear History</button>
+                                                        <button class="dropdown-item"><i class="material-icons">delete</i>Delete Channel</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="content" id="content">
+									<div class="container row">
+										<div class="col-md-12 ">
+											<div class="date">
+												<hr>
+												<span>Yesterday</span>
+												<hr>
+											</div>
+											<div class="message">
+												<img class="avatar-md" src="dist/img/avatars/avatar-female-5.jpg" data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
+												<div class="text-main">
+													<div class="text-group border">
+														<div class="text text-info">
+															<p>Hey guys, I just started my FYP chapter 3 .... </p>
+														</div>
+													</div>
+													<span>09:46 AM</span>
+												</div>
+											</div>
+											<div class="message">
+												<img class="avatar-md" src="dist/img/avatars/avatar-female-5.jpg" data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
+												<div class="text-main">
+													<div class="text-group">
+														<div class="text typing">
+															<div class="wave">
+																<span class="dot"></span>
+																<span class="dot"></span>
+																<span class="dot"></span>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+                                        </div>
+                                        
+									</div>
+								</div>
+								<div class="container">
+									<div class="col-md-12">
+										<div class="bottom">
+											<form class="position-relative w-100">
+												<textarea class="form-control text-info" placeholder="Start typing for reply..." rows="1"></textarea>
+												<button class="btn emoticons"><i class="material-icons">insert_emoticon</i></button>
+												<button type="submit" class="btn send"><i class="material-icons">send</i></button>
+											</form>
+											<label>
+												<input type="file">
+												<span class="btn attach d-sm-block d-none"><i class="material-icons">attach_file</i></span>
+											</label> 
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End of Chat -->
+                            <div class="call" id="call3">
+								<div class="content">
+									<div class="container ">
+										<div class="col-md-12">
+											<div class="inside">
+												<div class="panel">
+													<div class="participant">
+                                                        <img class="avatar-xxl" src="dist/img/avatars/avatar-female-3.jpg" alt="avatar">
+                                                        <img class="avatar-xxl" src="dist/img/avatars/avatar-female-2.jpg" alt="avatar">
+                                                        <img class="avatar-xxl" src="dist/img/avatars/avatar-female-1.jpg" alt="avatar">
+														<span>Connecting</span>
+													</div>							
+													<div class="options">
+														<button class="btn option" data-toggle="tooltip" data-placement="top" title="Mic"><i class="material-icons md-30">mic</i></button>
+														<button class="btn option" data-toggle="tooltip" data-placement="top" title="Video Camera"><i class="material-icons md-30">videocam</i></button>
+                                                        <button class="btn option call-end" data-toggle="tooltip" data-placement="top" title="Close"><i class="material-icons md-30">call_end</i></button>
+                                                        <button class="btn option" data-toggle="tooltip" data-placement="top" title="Share Screen"><i class="material-icons md-30">screen_share</i></button>
+														<button class="btn option" data-toggle="tooltip" data-placement="top" title="Speaker"><i class="material-icons md-30">volume_up</i></button>
+													</div>
+													<button class="btn back" name="3"><i class="material-icons md-24">chat</i></button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End of Call -->
+						</div>
+						<% } 
+					}%>
+                        <!-- End of Babble -->
+						<% } %>
+                        
+						<!-- Start of Babble -->
+						<div class="babble tab-pane fade" id="list-test" role="tabpanel" aria-labelledby="list-test-list">
+							<div class="chat">
+								<div class="top bg-primary text-white ">
+									<div class="container ">
+										<div class="col-md-12">
+											<div class="inside">
+												
+												<div class="data">
+													<h3>Speed Test </h3>
+													<span>Provided by <a href="https://www.meter.net">Meter.net</a></span>
+												</div>
+												<div class="dropdown">
+													<button class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons md-30">more_vert</i></button>
+													<div class="dropdown-menu dropdown-menu-right">
+                                                        <button class="dropdown-item"><i class="material-icons">delete</i>Restart the test</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="content empty">
+									<div class="container">
+										<div class="col-md-12" style="min-height:360px;">
+											<div style="width:100%;height:0;padding-bottom:50%;position:relative;">
+											<iframe style="border:none;position:absolute;top:0;left:0;width:100%;height:100%;min-height:360px;border:none;overflow:hidden !important;" src="https://www.metercustom.net/plugin/?th=w"></iframe>
+											</div>
+										</div>
+									</div>
+								
+								</div>
+							</div>
+						</div>
+                        <!-- End of Babble -->
+
+                        <!-- Start of Babble -->
+						<div class="babble tab-pane fade" id="list-agenda" role="tabpanel" aria-labelledby="list-agenda-list">
+							<!-- Start of Chat -->
+							<div class="chat" id="chat">
+								<div class="top bg-primary text-white ">
+									<div class="container ">
+										<div class="col-md-12">
+											<div class="inside">
+												
+												<div class="data">
+													<h3>Meeting Agenda  </h3>
+												</div>
+												<div class="dropdown">
+													<button class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons md-30">more_vert</i></button>
+													<div class="dropdown-menu dropdown-menu-right">
+                                                        <button class="dropdown-item"><i class="material-icons">delete</i>Delete Agenda</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							<!-- End of Chat -->
+							</div>
+							<div class="main order-md-2">
+								
+									<div class="">
+										<div class="col-md-12">
+											<div class="content">
+												<!-- Editable table -->
+												<div class="card">
+													<div class="card-body">
+													<div id="table" class="table-editable">
+														<span class="table-add float-right mb-3 mr-2"><a href="#!" class="text-success"><i class="fas fa-plus fa-2x" aria-hidden="true"></i></a></span>
+
+															<table class="table table-bordered table-responsive-md table-striped text-center">
+																<thead>
+																	<tr>
+																	<th class="text-center">Title</th>
+																	<td colspan="5" class="pt-3-half" contenteditable="true">Meeting 1 </td>
+																	</tr>
+																</thead>
+																<tbody>
+																	<tr>
+																	<th class="text-center">Date</th>
+																	<td colspan="" class="pt-3-half" contenteditable="true">9/9/2019</td>
+																	<th class="text-center">Time</th>
+																	<td colspan="" class="pt-3-half" contenteditable="true">1400</td>
+																	<th class="text-center">Location</th>
+																	<td colspan="" class="pt-3-half" contenteditable="true">Room 1</td>
+																	</tr>
+																	<!-- This is our clonable table line -->
+																	<tr>
+																		<th class="text-center">Objective</th>
+																		<td colspan="5" class="pt-3-half" contenteditable="true">To present the report of the assignment 1 </td>
+																	</tr>
+																	<!-- This is our clonable table line -->
+																	<tr>
+																		<th class="text-center">Objective</th>
+																		<td colspan="5" class="pt-3-half" contenteditable="true">Power Point Slide</td>
+																	</tr>
+																	<tr>
+																		<th class="text-center">Particants</th>
+																		<td colspan="5" class="pt-3-half" contenteditable="true">Rebecca , Winnie , Michael </td>
+																	</tr>
+																</tbody>
+															</table>
+														<table class="table table-bordered table-responsive-md table-striped text-center">
+														<thead>
+															<tr>
+															<th class="text-center">#</th>
+															<th class="text-center">Topic</th>
+															<th class="text-center">Presenter </th>
+															<th class="text-center">Time Allocated</th>
+															<th class="text-center">Sort</th>
+															<th class="text-center">Delete</th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr>
+															<td class="pt-3-half" contenteditable="true">1</td>
+															<td class="pt-3-half" contenteditable="true">Introduction</td>
+															<td class="pt-3-half" contenteditable="true">Rebecca</td>
+															<td class="pt-3-half" contenteditable="true">5 mins</td>
+															<td class="pt-3-half">
+																<span class="table-up"><a href="#!" class="text-dark"><i class="material-icons">arrow_upward</i></a></span>
+																<span class="table-down"><a href="#!" class="text-dark"><i class="material-icons">arrow_downward</i></a></span>
+															</td>
+															<td>
+																<span class="table-remove"><button type="button"
+																	class="btn btn-danger btn-rounded btn-sm my-0 text-danger">Remove</button></span>
+															</td>
+															</tr>
+															<!-- This is our clonable table line -->
+															<tr>
+																<td class="pt-3-half" contenteditable="true">2</td>
+																<td class="pt-3-half" contenteditable="true">Advantages and Disadvantages</td>
+																<td class="pt-3-half" contenteditable="true">Winnie</td>
+																<td class="pt-3-half" contenteditable="true">10 mins</td>
+																<td class="pt-3-half">
+																	<span class="table-up"><a href="#!" class="text-dark"><i class="material-icons">arrow_upward</i></a></span>
+																	<span class="table-down"><a href="#!" class="text-dark"><i class="material-icons">arrow_downward</i></a></span>
+																</td>
+																<td>
+																	<span class="table-remove"><button type="button"
+																		class="btn btn-danger btn-rounded btn-sm my-0 text-danger">Remove</button></span>
+																</td>
+																</tr>
+															<!-- This is our clonable table line -->
+															<tr>
+																<td class="pt-3-half" contenteditable="true">2</td>
+																<td class="pt-3-half" contenteditable="true">Tools Used</td>
+																<td class="pt-3-half" contenteditable="true">Michael</td>
+																<td class="pt-3-half" contenteditable="true">5 mins</td>
+																<td class="pt-3-half">
+																	<span class="table-up"><a href="#!" class="text-dark"><i class="material-icons">arrow_upward</i></a></span>
+																	<span class="table-down"><a href="#!" class="text-dark"><i class="material-icons">arrow_downward</i></a></span>
+																</td>
+																<td>
+																	<span class="table-remove"><button type="button"
+																		class="btn btn-danger btn-rounded btn-sm my-0 text-danger">Remove</button></span>
+																</td>
+																</tr>
+															<!-- This is our clonable table line -->
+														</tbody>
+														</table>
+													</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								
+						</div>
+                        <!-- End of Babble -->
+						
 					</div>
 				</div>
-			</div> 
+			</div> <!-- Layout -->
 		</main>
 		<!-- Bootstrap/Swipe core JavaScript
 		================================================== -->
@@ -667,6 +1050,8 @@
 		<script src="dist/js/vendor/popper.min.js"></script>
 		<script src="dist/js/swipe.min.js"></script>
 		<script src="dist/js/bootstrap.min.js"></script>
+		<script src="dist/js/tagsinput.js"></script>
+		<script src="dist/js/jquery.amsify.suggestags.js"></script>
 		<script>
 			function scrollToBottom(el) { el.scrollTop = el.scrollHeight; }
 			scrollToBottom(document.getElementById('content'));

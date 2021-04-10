@@ -4,7 +4,8 @@ const mysqlConnection = mysql.createConnection({
     host:'localhost',
     user:'root',
     password:'',
-    database:'video_conferencing'
+    database:'video_conferencing',
+    multipleStatements: true
   
   })
 

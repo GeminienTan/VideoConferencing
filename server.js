@@ -1,12 +1,23 @@
 const express = require("express");
 const mysql = require("mysql");
 const app = express();
+const session = require('express-session')
 const server = require("http").Server(app);
 const io = require("socket.io")(server);
 const bodyParser = require('body-parser');
 const CryptoJS = require("crypto-js");
 const { ExpressPeerServer } = require("peer");
+
+
+//A simple JavaScript alert manager
 const JSAlert = require("js-alert");
+//A JavaScript date library for parsing, validating, manipulating, and formatting dates
+const moment = require('moment');
+
+//A node.js middleware for handling multipart/form-data, which is primarily used for uploading files. 
+const multer = require('multer');
+
+const path = require('path');
 
 const peerServer = ExpressPeerServer(server, {
   debug: true,
@@ -26,6 +37,15 @@ app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.set('trust proxy', 1) // trust first proxy
+
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}))
+
 app.get("/", (req, res) => {
   //   res.redirect(`/${uuidV4()}`);
   res.render("index");
@@ -42,7 +62,7 @@ app.post('/sign-up',(req, res) => {
   const u_lname = req.body.lname;
   const u_name = u_fname +" "+ u_lname;
   const u_password = CryptoJS.MD5(req.body.password);
-  let data = {u_name: u_name,u_gender: req.body.gender,u_dob: req.body.birthday,u_phone: req.body.phone,u_email: req.body.email,u_password: u_password.toString(),u_profilepic: "dist/img/avatars",u_point:0,u_status:'A'};
+  let data = {u_name: u_name,u_gender: req.body.gender,u_dob: req.body.birthday,u_phone: req.body.phone,u_email: req.body.email,u_password: u_password.toString(),u_profilepic: "dist/img/avatars/avatar-default.jpg",u_point:0,u_status:'A'};
   console.log(data);
    let sql = "INSERT INTO user SET ?";
     let query = mysqlConnection.query(sql, data,(err, results) => {
@@ -65,22 +85,49 @@ app.post('/home',(req, res) => {
     }
     rows.forEach((row) => {
       const u_id = row.u_id;
-      var contact_name = [];
-      let sql2 = "SELECT * from user INNER JOIN contact ON (contact.ct_email = user.u_email) WHERE contact.u_id = ? ";
-      let query2 = mysqlConnection.query(sql2,[u_id],(err, rows) => {
-        if(err) throw err;
-        
-        rows.forEach((row) => {
-           contact_name.push(row.u_name);
+      //sess.u_id = u_id;
+      var queries = [
+        //"SELECT * FROM room INNER JOIN room_record ON (room.r_id = room_record.r_id) INNER JOIN channel ON (channel.r_id = room.r_id) INNER JOIN user ON (user.u_id = room_record.u_id) WHERE room_record.u_id= '4' OR room.r_owner_id ='4'",
+        //"SELECT * FROM room_record JOIN room ON (room.r_id = room_record.r_id) JOIN channel ON (channel.r_id = room.r_id) WHERE room_record.u_id= '4' OR room.r_owner_id ='4'",
+        "SELECT user.u_id,u_name,u_profilepic,u_status,u_email FROM user INNER JOIN contact ON (contact.ct_email = user.u_email) WHERE contact.u_id =? AND contact.ct_status = 'A'",
+        "SELECT room.r_id as r_id,c_title,c_desc,c_id FROM room LEFT JOIN room_record ON (room.r_id = room_record.r_id) INNER JOIN channel ON (channel.r_id = room.r_id) WHERE room_record.u_id=? OR room.r_owner_id =? AND room.r_status = 'A' AND channel.c_status ='A'",
+        "SELECT room.r_id as r_id,r_title,r_desc FROM room LEFT JOIN room_record ON (room.r_id = room_record.r_id) WHERE room_record.u_id=? OR room.r_owner_id =? AND room.r_status = 'A'",
+        "SELECT * FROM schedule WHERE s_status = 'A' AND u_id=?",
+        "SELECT * FROM user WHERE u_id=?",
+        "SELECT u1.u_name as sender_name, u2.u_name as receiver_name, u1.u_id as sender_id, u2.u_id as receiver_id,  u1.u_profilepic as sender_profilepic, u2.u_profilepic as receiver_profilepic, u1.u_status as sender_status, u2.u_status as receiver_status FROM conversation INNER JOIN user u1 ON(u1.u_id = conversation.cv_sender) INNER JOIN user u2 ON(u2.u_id = conversation.cv_receiver) WHERE cv_sender = 4 or cv_receiver = 4",
+        "SELECT u1.u_name as sender_name, u2.u_name as receiver_name, u1.u_id as sender_id, u2.u_id as receiver_id, u1.u_profilepic as sender_profilepic, u2.u_profilepic as receiver_profilepic,cm_content,cm_datetime,cm_file FROM chat_message INNER JOIN user u1 ON(u1.u_id = chat_message.cm_sender) INNER JOIN user u2 ON(u2.u_id = chat_message.cm_receiver) WHERE cm_sender=? OR cm_receiver=? ORDER BY cm_datetime DESC",
+      ];
+    
+      mysqlConnection.query(queries.join(';'),[u_id,u_id,u_id,u_id,u_id,u_id,u_id,u_id,u_id],(err, results, fields) => {
+    
+        if (err) throw err;
+
+        /*console.log(results[0]);
+        console.log(results[1]);
+        console.log(results[2]);
+        console.log(results[3]);
+        console.log(results[4]);*/
+        console.log(results[5]);
+        console.log(results[6]);
+        res.render('home', {
+          u_id:u_id,
+          moment: moment,
+          contact: results[0], 
+          channel: results[1], 
+          room: results[2],
+          schedule: results[3],
+          account: results[4],
+          conversation:results[5],
+          message:results[6],
         });
-        res.render('home', { u_id:u_id,contact_name:contact_name});
+    
       });
       
     });
   });
 });
 
-//when user submit form to sign in 
+//when user submit form to addRoom 
 app.post('/addRoom',(req, res) => {
   let roomData = {r_title: req.body.r_title, r_desc: req.body.r_desc,r_status:'A',r_owner_id: req.body.owner_id};
   let channelData = {c_title: req.body.c_title, c_desc: req.body.c_desc,c_status:'A'};
@@ -90,11 +137,9 @@ app.post('/addRoom',(req, res) => {
     if(err) throw err;
     //res.redirect('/new');
   });
-
   let sql2 = "INSERT INTO channel SET ?,r_id=(SELECT max(r_id) FROM room)";
   let query2 = mysqlConnection.query(sql2, channelData,(err2, results2) => {
     if(err2) throw err2;
-    //res.redirect('/new');
   });
 });
 
@@ -106,40 +151,119 @@ app.get("/join-guest", (req, res) => {
   res.render("");
 });
 
-app.get("/new", (req, res) => {
-  //   res.redirect(`/${uuidV4()}`);
-  res.render("new");
-});
-
-app.get('/users',(req, res) => {
-  let sql = "SELECT * FROM user INNER JOIN contact ON (contact.ct_email = user.u_email) ";
-  let query = mysqlConnection.query(sql, (err, rows) => {
-      if(err) throw err;
-      res.render('users', {
-          users : rows
-      });
-  });
-});
-
 app.post('/addContact',(req, res) => {
-  let data = {ct_email: req.body.ct_email, u_id: 1};
+  let data = {ct_email: req.body.ct_email, u_id:req.body.u_id ,ct_status:'A'};
     let sql = "INSERT INTO contact SET ?";
     let query = mysqlConnection.query(sql, data,(err, results) => {
       if(err) throw err;
-      res.redirect('/new');
+      //res.redirect('/new');
     });
 });
 
+app.post('/addChat',(req, res) => {
+  
+  
+  let current_time = moment().format("YYYY-MM-DD HH:mm:ss");
+  console.log(current_time)
+  var cv_sender = parseInt(req.body.sender);
+  let sql1 = "SELECT u_id FROM user WHERE u_name =?";
+  let query1 = mysqlConnection.query(sql1,req.body.receiver ,(err, rows) => {
+    if(err) throw err;
+    rows.forEach((row) => {
+      var cv_receiver = row.u_id;
+      //console.log("receiver",cv_receiver);
+
+      let chatData = {cm_content: req.body.content,cm_file:'',cm_datetime:current_time,cm_receiver: cv_receiver,cm_sender: cv_sender,cm_status: 'A'};
+      
+      //create conversation
+      let sql2 = "SELECT cv_id FROM conversation WHERE (cv_receiver=? AND cv_sender=?) OR (cv_sender=? AND cv_receiver=?)";
+      let query2 = mysqlConnection.query(sql2,[cv_receiver,cv_sender,cv_receiver,cv_sender] ,(err, rows) => {
+        if(err) throw err;
+        if(rows==0){
+          console.log("New conversation");
+          let sql2 = "INSERT into conversation SET cv_receiver=?,cv_sender=?";
+          let query2 = mysqlConnection.query(sql2,[cv_receiver,cv_sender] ,(err, results) => {
+            if(err) throw err;
+            console.log("Insert conversation successfully");
+            
+            let sql3 = "INSERT into chat_message SET ? , cv_id= (SELECT MAX(cv_id) as cv_id from conversation)";
+            let query3 = mysqlConnection.query(sql3,chatData,(err, results) => {
+              if(err) throw err;
+              console.log("Insert message successfully with new conver");
+
+            });
+          });
+        }
+        rows.forEach((row) => {
+          const cv_id = row.cv_id;
+          console.log("cvid",cv_id);
+          let sql4 = "INSERT into chat_message SET ? , cv_id= ?";
+            let query4 = mysqlConnection.query(sql4,[chatData,cv_id],(err, results) => {
+              if(err) throw err;
+              console.log("Insert message successfully with old conver");
+
+            });
+
+        });
+      });
+    });
+  });
+
+  
+
+
+  /*let sql1 = "SELECT u_id FROM user WHERE u_name =?";
+  let query1 = mysqlConnection.query(sql1,req.body.receiver ,(err, rows) => {
+    if(err) throw err;
+    rows.forEach((row) => {
+      const receiver = row.u_id;
+      let chatData = {cm_content: req.body.content,cm_file:'',cm_datetime:current_time,cm_receiver: receiver,cm_sender: parseInt(req.body.sender),cm_status: 'A'};
+      let sql2 = "INSERT INTO chat_message SET ?";
+      let query2 = mysqlConnection.query(sql2, chatData,(err2, results2) => {
+        if(err2) throw err2;
+        console.log("Insert Successfully!");
+      });
+    });
+
+  });*/
+});
+
+//when user submit form to add Schedule 
 app.post('/addSchedule',(req, res) => {
-  let s_attendees = req.body.s_attendees;
-  console.log(s_attendees[1]);
-  /*let data = {s_title: req.body.s_title,s_objective: req.body.s_objective,
-    s_date: req.body.s_date,s_stime: req.body.s_stime,s_etime: req.body.s_etime,s_status:"A", u_id: req.body.owner_id};
-    let sql = "INSERT INTO schedule SET ?";
-    let query = mysqlConnection.query(sql, data,(err, results) => {
+  let scheduleData = {s_title: req.body.s_title, s_objective: req.body.s_objective,s_status:'A',s_date: req.body.s_date,s_stime: req.body.s_stime,s_etime: req.body.s_etime,u_id:req.body.owner_id};
+  let attendees = req.body.s_attendees;
+
+  let sql1 = "INSERT INTO schedule SET ?";
+  let query1 = mysqlConnection.query(sql1, scheduleData,(err, results) => {
+    if(err) throw err;
+    console.log("Insert Successfully");
+
+    for($i=0;$i<attendees.length;$i++) {
+
+      if(attendees[$i] != '')
+      {
+        let sql2 = "INSERT INTO attendees SET u_id=(SELECT u_id FROM user WHERE u_name = ? ),s_id=(SELECT max(s_id) FROM schedule)";
+        let query2 = mysqlConnection.query(sql2,attendees[$i] ,(err2, results2) => {
+          if(err2) throw err2;
+          
+        });
+      }
+    }
+  });
+  //res.redirect('/home');
+  
+});
+
+//when user submit form to addRoom 
+app.post('/editProfile',(req, res) => {
+  let u_id = req.body.u_id;
+  let profileData = {u_name: req.body.u_name,u_gender: req.body.u_gender,u_dob: req.body.u_dob,u_phone: req.body.u_phone,u_email: req.body.u_email};
+  console.log(profileData)
+
+  let sql = "UPDATE user SET ? where U_id = ?";
+    let query = mysqlConnection.query(sql,[profileData,u_id],(err, results) => {
       if(err) throw err;
-      res.redirect('/new');
-    });*/
+    });
 });
 
 app.get("/create", (req, res) => {

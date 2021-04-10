@@ -36,6 +36,7 @@
 	</head>
 	<body>
 		<main>
+            
 			<div class="layout">
 				<!-- Start of Navigation -->
 				<div class="navigation">
@@ -43,11 +44,11 @@
 						<div class="inside">
 							<div class="nav nav-tab menu">
 								<a href="#home" data-toggle="tab"class="active">Home<i class="material-icons active">home</i></a>
-								<a href="#members" data-toggle="tab" class="f-grow1">Contact<i class="material-icons">account_circle</i></a>
+								<a href="#contact" data-toggle="tab" class="f-grow1">Contact<i class="material-icons">account_circle</i></a>
 								<a href="#notifications" data-toggle="tab" class="f-grow1">Notification<i class="material-icons">notifications_none</i></a>
 								<a href="#discussions" data-toggle="tab" class="f-grow1">Chat<i class="material-icons">chat_bubble_outline</i></a>
-								<a href="#schedule" data-toggle="tab">Schedule<i class="material-icons">today</i></a>
-								<a href="#settings" data-toggle="tab">Settings<i class="material-icons">settings</i></a>
+								<a href="#schedule" data-toggle="tab"class="f-grow1">Schedule<i class="material-icons">today</i></a>
+								<a href="#settings" data-toggle="tab" >Settings<i class="material-icons">settings</i></a>
 								<button class="btn power" onclick="visitPage();">Log out<i class="material-icons">power_settings_new</i></button>
 							</div>
 						</div>
@@ -138,7 +139,7 @@
 							    
 								<!-- End of Room -->
 								<!-- Start of Contacts -->
-								<div class="tab-pane fade" id="members">
+								<div class="tab-pane fade" id="contact">
 									<div class="search">
 										<form class="form-inline position-relative">
 											<input type="search" class="form-control" id="people" placeholder="Search for people...">
@@ -263,7 +264,7 @@
 								</div>
 								<!-- End of Contacts -->
 								<!-- Start of Discussions -->
-								<div id="discussions" class="tab-pane fade ">
+								<div class="tab-pane fade " id="discussions" >
 									<div class="search">
 										<form class="form-inline position-relative">
 											<input type="search" class="form-control" id="conversations" placeholder="Search for conversations...">
@@ -374,7 +375,7 @@
 								<!-- End of Notifications -->
 								<!-- Start of Schedule -->
 							
-								<div id="schedule" class="tab-pane fade ">
+								<div id="schedule" class="tab-pane fade">
 									<div class="search">
 										<form class="form-inline position-relative">
 											<input type="search" class="form-control" id="conversations" placeholder="Search for schedule">
@@ -654,9 +655,7 @@
                 <%- include('sidebar/addForms.ejs') %>
                 
 
-					</div>
 				</div>
-			</div> 
 		</main>
 		<!-- Bootstrap/Swipe core JavaScript
 		================================================== -->

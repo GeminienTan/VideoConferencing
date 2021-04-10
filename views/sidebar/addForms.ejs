@@ -1,5 +1,5 @@
 <!-- Start of Create Room -->
-<div class="modal fade" id="addNewRoom" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="addRoom" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered border border-info" role="document">
         <div class="requests">
             <div class="title">
@@ -28,14 +28,15 @@
                     <div class="form-group">
                         <label for="participant">Invite User to this Room:</label>
                         <select class="form-control" multiple data-role="tagsinput" id="s_attendees" name="c_attendees">
-                            <option value="jQuery">jQuery</option>
-                            <option value="Angular">Angular</option>
-                            <option value="React">React</option>
-                            <% for (var i in contact_name){%>
-                                <option value="<%= contact_name[i] %>"><%= contact_name[i] %></option>
+                            <% for (var i in contact){%>
+                                <option value="<%= contact[i].u_name %>"><%= contact[i].u_name %></option>
                             <%} %> 
                         </select>
+                    
                     </div>
+                    <br>
+                    <br>
+                    <br>
                     <button type="submit" class="btn button w-100">Create Room</button>
                 </form>
             </div>
@@ -45,7 +46,7 @@
 <!-- End of Create Room -->
 
 <!-- Start of Add Contacts -->
-<div class="modal fade" id="addNewContact" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="addContact" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered border border-info" role="document">
         <div class="requests">
             <div class="title">
@@ -54,7 +55,7 @@
             </div>
             <div class="content">
                 <form action="/addContact" method="POST">
-                    <p>Enter email address</p>
+                    <input type="text" name="u_id" value="<%= u_id %>" hidden>
                     <div class="form-group">
                         <label for="user">Email:</label>
                         <input type="email" class="form-control" id="ct_email" name="ct_email" placeholder="Enter email address" >
@@ -68,7 +69,7 @@
 <!-- End of Add Contacts-->
 
 <!-- Start of Add Chat -->
-<div class="modal fade" id="addNewChat" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="addChat" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered  border border-info " role="document">
         <div class="requests">
             <div class="title">
@@ -76,19 +77,23 @@
                 <button type="button" class="btn" data-dismiss="modal" aria-label="Close"><i class="material-icons">close</i></button>
             </div>
             <div class="content">
-                <form>
+                <form action="addChat" method="POST">
+                    <input type="hidden" value="<%= u_id %>" id="sender" name="sender">
+                    <input type="hidden" value="<%= new Date();%>" id="datetime" name="datetime">
                     <div class="form-group">
-                        <label for="participant">Recipient:</label>
-                        <input type="text" class="form-control" id="participant" placeholder="Add recipient..." required>
-                        <div class="user" id="recipient">
-                            <img class="avatar-sm" src="dist/img/avatars/avatar-female-5.jpg" alt="avatar">
-                            <h5>Keith Morris</h5>
-                            <button class="btn"><i class="material-icons">close</i></button>
-                        </div>
+                        <label for="recipient">Recipient:</label>
+                       
+                         <input list="receivers" class="form-control" id="receiver" name="receiver" >
+                        <datalist id="receivers">
+                            <% for (var i in contact){%>
+                                <option value="<%= contact[i].u_name %>"></option>
+                            <%} %>
+                        </datalist>
+                        
                     </div>
                     <div class="form-group">
                         <label for="message">Message:</label>
-                        <textarea class="text-control" id="message" placeholder="Send your welcome message...">Hi Friends ! </textarea>
+                        <textarea class="text-control" id="content" name="content" >Hi Friends ! </textarea>
                     </div>
                     <button type="submit" class="btn button w-100">Send Message</button>
                 </form>
@@ -99,7 +104,7 @@
 <!-- End of Add Chat -->
 
 <!-- Start of Add Schedule -->
-<div class="modal fade" id="addNewSchedule" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="addSchedule" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered border border-info" role="document">
         <div class="requests">
             <div class="title">
@@ -108,7 +113,7 @@
             </div>
             <div class="content">
                 <form action="addSchedule" method="POST" >
-                    <input type="text" class="form-control" name="owner_id" value="1" hidden>
+                    <input type="text" class="form-control" name="owner_id" value="<%= u_id %>" hidden>
                     <div class="form-group">
                         <label for="user">Meeting Title</label>
                         <input type="text" class="form-control" id="s_title" name="s_title">
@@ -137,10 +142,8 @@
                     <div class="form-group">
                         <label for="user">Required Attendees</label>
                         <select class="form-control" multiple data-role="tagsinput" id="s_attendees" name="s_attendees">
-                        <option value="jQuery">jQuery</option>
-                        <option value="Angular">Angular</option>
-                        <option value="React">React</option>
-                        <option value="Vue">Vue</option>
+                        <option value="Christopher Ooi">Christopher Ooi</option>
+                        <option value="Jenny Lim">Jenny Lim</option>
                         </select>
                     </div>
 
