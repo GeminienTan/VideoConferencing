@@ -44,13 +44,13 @@
 									</form>
                  					<br>
 									<h3>or Join a meeting now with Meeting ID:</h3>
-									<form action="join-guest" method="GET">
+										<div class="w-50 mx-auto">
 										<div class="form-group">
-											<input type="text" id="inputMeeting" class="form-control" placeholder="Meeting ID" required>
-											<button class="btn icon"><i class="material-icons">link_outline</i></button>
+											<input id="join-meetno" name="join-meetno" type="text" class="form-control confno" autocomplete="off" maxlength="40" placeholder="Meeting ID" required/>
+											<button class="btn icon "><i class="material-icons">link_outline</i></button>
 										</div>
-										<button type="submit" class="btn button">Join Meeting</button>
-									</form>
+										<button class="btn button " type="submit" id="join-meeting" name="join-meeting" onclick="joinGuestMeeting()">Join Meeting</button>
+										</div>
 									
 								</div>
 							</div>
@@ -80,6 +80,7 @@
 		<script>window.jQuery || document.write('<script src="dist/js/vendor/jquery-slim.min.js"><\/script>')</script>
 		<script src="dist/js/vendor/popper.min.js"></script>
 		<script src="dist/js/bootstrap.min.js"></script>
+		<script src="dist/js/home.js"></script>
 		<script src="https://npmcdn.com/js-alert/dist/jsalert.min.js"></script>
 		<script>
 			function showPassword() {
@@ -91,6 +92,25 @@
 				x.type = "password";
 				}
 			}
+			const joinGuestMeeting = () => {
+				var meetingId = $("#join-meetno");
+				var errorMessage;
+
+				alert(meetingId.val());
+				(async () => {
+					const rawResponse = await fetch(`/validateName/${meetingId.val()}`);
+					const content = await rawResponse.json();
+
+					console.log(content);
+					if (content.valid) {
+						alert("ok")
+						window.location.href = `/joinGuestMeeting/${meetingId.val()}`;
+					} else {
+						JSAlert.alert("Sorry, Room not found.");
+					}
+				})();
+				
+			};
 		</script>
 		<%
 		if (typeof(message) !=="undefined"){
