@@ -183,7 +183,7 @@ app.get("/admin/getUserDataByAgeGroup", (req, res) => {
 
 app.get("/admin/getAllUser", (req, res) => {
   if(!req.session.ad_id) {
-    res.redirect(url_for('/admin'));
+    res.redirect('/admin');
   }
   let sql = "SELECT u_id,u_name,u_gender,u_dob,u_phone,u_email,u_point,u_status,u_register_date FROM user";
   let query = mysqlConnection.query(sql,(err, results) => {
@@ -196,7 +196,7 @@ app.get("/admin/getAllUser", (req, res) => {
 
 app.get("/admin/getAllGuest", (req, res) => {
   if(!req.session.ad_id) {
-    res.redirect(url_for('/admin'));
+    res.redirect('/admin');
   }
   let sql = "SELECT * FROM guest";
   let query = mysqlConnection.query(sql,(err, results) => {
@@ -208,7 +208,7 @@ app.get("/admin/getAllGuest", (req, res) => {
 
 app.get("/admin/getAllAdmin", (req, res) => {
   if(!req.session.ad_id) {
-    res.redirect(url_for('/admin'));
+    res.redirect('/admin');
   }
   let sql = "SELECT * FROM admin";
   let query = mysqlConnection.query(sql,(err, results) => {
@@ -219,7 +219,7 @@ app.get("/admin/getAllAdmin", (req, res) => {
 
 app.get("/admin/getAllFeedback", (req, res) => {
   if(!req.session.ad_id) {
-    res.redirect(url_for('/admin'));
+    res.redirect('/admin');
   }
   var queries = [
     "SELECT AVG(f_star) AS averageStar FROM feedback",
@@ -247,7 +247,7 @@ app.post("/admin/addAdmin", (req, res) => {
    let sql = "INSERT INTO admin SET ?";
     let query = mysqlConnection.query(sql, data,(err, results) => {
     if(err) throw err;
-    res.redirect(url_for("admin"));
+    res.redirect("admin");
     });
 });
 
@@ -324,7 +324,7 @@ app.post('/home',(req, res) => {
       req.session.u_id = u_id;
       req.session.u_name = u_name;
       req.session.save();
-      res.redirect(url_for('/home'));
+      res.redirect('/home');
       
     });
   });
@@ -438,7 +438,7 @@ app.post('/addRoom',(req, res) => {
   });
   req.flash('info', 'Room created successfully!' );
   req.session.save();
-  res.redirect(url_for("home"));
+  res.redirect("home"));
 
 });
 
@@ -452,7 +452,7 @@ app.post('/addChannel',(req, res) => {
       if(err1) throw err1;
       console.log("Insert Channel Successfully!");
     });
-    res.redirect(url_for("home"));
+    res.redirect("home"));
 });
 
 //when user submit feedback form 
@@ -466,7 +466,7 @@ app.post('/submitFeedback',(req, res) => {
     if(err) throw err;
     console.log("Insert Feedback");
   });
-  res.redirect(url_for("home"));
+  res.redirect("home");
 });
 
 app.post('/addMember',(req, res) => {
@@ -493,7 +493,7 @@ app.post('/addMember',(req, res) => {
       });
     }
     generateNotification(r_id,attendees);
-    res.redirect(url_for("/home"));
+    res.redirect("/home");
 
 });
 
@@ -607,7 +607,7 @@ app.post('/addChat',(req, res) => {
                   if(err5) throw err5;
                   console.log("Insert message successfully with old conver");
                   addNotification(notificationContent);
-                  res.redirect(url_for('/home'));
+                  res.redirect('/home');
             });
 
             });
@@ -633,7 +633,7 @@ app.post('/addChat',(req, res) => {
               if(err6) throw err6;
               console.log("Insert message successfully with old conver");
               addNotification(notificationContent);
-              res.redirect(url_for('/home'));
+              res.redirect('/home');
 
             });
   }
