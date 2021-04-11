@@ -1134,10 +1134,7 @@ app.get("/leaveMeeting/:m_id&:id&:type", (req, res) => {
   const m_id = req.params.m_id;
   const id = req.params.id; 
   var sql;
-  if(type =="host"){
-    sql = "UPDATE meeting_participant SET mp_leave_time = ? where m_id = ? AND mp_u_id =? ";
-  }
-  else if(type=="user"){
+  if(type=="user"){
     sql = "UPDATE meeting_participant SET mp_leave_time = ? where m_id = ? AND mp_u_id =? ";
   }
   else if(type=="guest"){
