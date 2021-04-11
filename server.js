@@ -1146,12 +1146,6 @@ app.get("/leaveMeeting/:m_id&:id&:type", (req, res) => {
 
     let query = mysqlConnection.query(sql,[current_time,m_id,id],(err, results) => {
       if(err) throw err;
-      if (type="host"){
-      let sql1 = "UPDATE meeting SET m_etime = ? where m_id = ? AND m_owner_id =? ";
-      let query1 = mysqlConnection.query(sql1,[current_time,m_id,id],(err1, results) => {
-        if(err1) throw err1;
-        console.log("Host end meeting");
-      });}
       console.log("User leave meeting");
       res.redirect("/feedback");
     });
@@ -1163,11 +1157,6 @@ app.get("/:room", (req, res) => {
   const guest_id = req.session.g_id;
   const guest_name = req.session.g_name;
   const roomId = req.params.room;
-  console.log(u_id);
-  console.log(u_name);
-  console.log(guest_id);
-  console.log(guest_name);
-  console.log("enter room "+roomId);
   
   if (uuidV4Validate(req.params.room)) {
     var data = []; 
