@@ -1,13 +1,8 @@
 const joinMeeting = (u_id,m_id,m_code) => {
 
-  alert(u_id);
-  alert(m_id);
-  alert(m_code);
   (async () => {
     const rawResponse = await fetch(`/validateName/${m_code}`);
     const content = await rawResponse.json();
-
-    alert(content);
     if (content.valid) {
       //errorBox.css("visibility", "hidden");
       window.open(
@@ -95,8 +90,6 @@ const clearChat = (id) => {
 };
 
 const deleteChannel = (id) => {
-  alert("deleteChannel");
-  alert(id);
   JSAlert.confirm("Are you sure you want to delete this channel?").then(function(result) {
  
     // Check if pressed yes

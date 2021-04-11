@@ -7,7 +7,6 @@ socket.on('message',message =>{
 });
 for (var i = 0 ; i < cvForm.length; i++) {
     cvForm[i].addEventListener('submit',(e)=>{
-    alert("ok")
     e.preventDefault();
     //const msg = $(e.target).closest('textarea[name="content"]').val();
     const msg = e.target['content'].value;

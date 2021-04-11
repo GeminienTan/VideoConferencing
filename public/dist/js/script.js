@@ -103,7 +103,6 @@ const connectToNewUser = (userId, stream) => {
     addVideoStream(video, userVideoStream);
     peerList.push(call.peer);
     currentPeer = call.peerConnection
-    alert(peerList)
   });
   call.on('close', () => {
     video.remove()
@@ -229,10 +228,10 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 const addChat = (msg) => {
-  alert(msg);
+  /*alert(msg);
   alert(chat_type);
   alert(c_id);
-  alert(cv_id);
+  alert(cv_id);*/
 }
 
 

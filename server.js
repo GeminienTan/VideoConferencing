@@ -150,7 +150,7 @@ app.get("/admin/dashboard", (req, res) => {
 
 app.get("/admin/getUserDataByGender", (req, res) => {
   var data= [];
-  let sql = "SELECT u_gender as gender, COUNT(*) as count FROM user GROUP BY u_gender";
+  let sql = "SELECT u_gender as gender, COUNT(*) as count FROM user GROUP BY u_gender ";
     let query = mysqlConnection.query(sql,(err, rows) => {
     if(err) throw err;
     rows.forEach((row) => {
@@ -167,7 +167,7 @@ app.get("/admin/getUserDataByGender", (req, res) => {
 app.get("/admin/getUserDataByAgeGroup", (req, res) => {
   var data= [];
 
-  let sql = "SELECT count(u_id) AS count , CASE WHEN datediff(now(), u_dob) / 365.25 >= 65 THEN '65 years and over' WHEN datediff(now(), u_dob) / 365.25 >= 55 THEN '55-64' WHEN datediff(now(), u_dob) / 365.25 >= 25 THEN '25-54' WHEN datediff(now(), u_dob) / 365.25 > 15 THEN '15-24' ELSE '0-14' END AS age_group FROM user GROUP BY age_group ";
+  let sql = "SELECT count(u_id) AS count , CASE WHEN datediff(now(), u_dob) / 365.25 >= 65 THEN '65 years and over' WHEN datediff(now(), u_dob) / 365.25 >= 55 THEN '55-64' WHEN datediff(now(), u_dob) / 365.25 >= 25 THEN '25-54' WHEN datediff(now(), u_dob) / 365.25 > 15 THEN '15-24' ELSE '0-14' END AS age_group FROM user WHERE u_dob IS NOT NULL GROUP BY age_group ";
     let query = mysqlConnection.query(sql,(err, rows) => {
     if(err) throw err;
     rows.forEach((row) => {
@@ -183,7 +183,7 @@ app.get("/admin/getUserDataByAgeGroup", (req, res) => {
 
 app.get("/admin/getAllUser", (req, res) => {
   if(!req.session.ad_id) {
-    res.redirect('/admin');
+    res.redirect(url_for('/admin'));
   }
   let sql = "SELECT u_id,u_name,u_gender,u_dob,u_phone,u_email,u_point,u_status,u_register_date FROM user";
   let query = mysqlConnection.query(sql,(err, results) => {
@@ -196,7 +196,7 @@ app.get("/admin/getAllUser", (req, res) => {
 
 app.get("/admin/getAllGuest", (req, res) => {
   if(!req.session.ad_id) {
-    res.redirect('/admin');
+    res.redirect(url_for('/admin'));
   }
   let sql = "SELECT * FROM guest";
   let query = mysqlConnection.query(sql,(err, results) => {
@@ -208,7 +208,7 @@ app.get("/admin/getAllGuest", (req, res) => {
 
 app.get("/admin/getAllAdmin", (req, res) => {
   if(!req.session.ad_id) {
-    res.redirect('/admin');
+    res.redirect(url_for('/admin'));
   }
   let sql = "SELECT * FROM admin";
   let query = mysqlConnection.query(sql,(err, results) => {
@@ -219,7 +219,7 @@ app.get("/admin/getAllAdmin", (req, res) => {
 
 app.get("/admin/getAllFeedback", (req, res) => {
   if(!req.session.ad_id) {
-    res.redirect('/admin');
+    res.redirect(url_for('/admin'));
   }
   var queries = [
     "SELECT AVG(f_star) AS averageStar FROM feedback",
@@ -247,7 +247,7 @@ app.post("/admin/addAdmin", (req, res) => {
    let sql = "INSERT INTO admin SET ?";
     let query = mysqlConnection.query(sql, data,(err, results) => {
     if(err) throw err;
-    res.redirect("back");
+    res.redirect(url_for("admin"));
     });
 });
 

@@ -21,7 +21,6 @@ myScreen.addEventListener("resize", ev => {
 }, false);
 
 startButton.addEventListener('click', () => {
-  alert("ok");
   let myScreenStream;
   navigator.mediaDevices.getDisplayMedia({video: true})
   .then((stream) => {
@@ -60,7 +59,6 @@ const setPlayScreen = () => {
 };
 
 const addShareStream = (video, stream) => {
-  alert("add");
   video.srcObject = stream;
   video.addEventListener("loadedmetadata", () => {
     video.play();
