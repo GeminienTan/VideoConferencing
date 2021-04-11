@@ -302,8 +302,6 @@ app.post('/loginGoogle',(req, res) => {
       req.session.u_name = u_name;
       req.session.save();
       res.json({msg:'success'})
-      //res.redirect('/home');
-      //res.send({message:"success"})
       
     });
   });
@@ -326,7 +324,7 @@ app.post('/home',(req, res) => {
       req.session.u_id = u_id;
       req.session.u_name = u_name;
       req.session.save();
-      res.redirect('/home');
+      res.redirect(url_for('/home'));
       
     });
   });
@@ -440,7 +438,7 @@ app.post('/addRoom',(req, res) => {
   });
   req.flash('info', 'Room created successfully!' );
   req.session.save();
-  res.redirect("home");
+  res.redirect(url_for("home"));
 
 });
 
@@ -454,7 +452,7 @@ app.post('/addChannel',(req, res) => {
       if(err1) throw err1;
       console.log("Insert Channel Successfully!");
     });
-    res.redirect("home");
+    res.redirect(url_for("home"));
 });
 
 //when user submit feedback form 
@@ -468,7 +466,7 @@ app.post('/submitFeedback',(req, res) => {
     if(err) throw err;
     console.log("Insert Feedback");
   });
-  res.redirect("home");
+  res.redirect(url_for("home"));
 });
 
 app.post('/addMember',(req, res) => {
@@ -495,7 +493,7 @@ app.post('/addMember',(req, res) => {
       });
     }
     generateNotification(r_id,attendees);
-    res.redirect("/home");
+    res.redirect(url_for("/home"));
 
 });
 
@@ -609,7 +607,7 @@ app.post('/addChat',(req, res) => {
                   if(err5) throw err5;
                   console.log("Insert message successfully with old conver");
                   addNotification(notificationContent);
-                  res.redirect('/home');
+                  res.redirect(url_for('/home'));
             });
 
             });
@@ -635,10 +633,9 @@ app.post('/addChat',(req, res) => {
               if(err6) throw err6;
               console.log("Insert message successfully with old conver");
               addNotification(notificationContent);
-              res.redirect('/home');
+              res.redirect(url_for('/home'));
 
             });
-    console.log(chatData);
   }
 });
 
@@ -1138,12 +1135,6 @@ app.get("/leaveMeeting/:m_id&:id&:type", (req, res) => {
   const id = req.params.id; 
   var sql;
   if(type =="host"){
-    let sql1 = "UPDATE meeting SET m_etime = ? where m_id = ? AND m_owner_id =? ";
-    let query1 = mysqlConnection.query(sql1,[current_time,m_id,id],(err1, results) => {
-      if(err1) throw err1;
-      console.log("Host end meeting");
-    });
-
     sql = "UPDATE meeting_participant SET mp_leave_time = ? where m_id = ? AND mp_u_id =? ";
   }
   else if(type=="user"){
@@ -1155,6 +1146,12 @@ app.get("/leaveMeeting/:m_id&:id&:type", (req, res) => {
 
     let query = mysqlConnection.query(sql,[current_time,m_id,id],(err, results) => {
       if(err) throw err;
+      if (type="host"){
+      let sql1 = "UPDATE meeting SET m_etime = ? where m_id = ? AND m_owner_id =? ";
+      let query1 = mysqlConnection.query(sql1,[current_time,m_id,id],(err1, results) => {
+        if(err1) throw err1;
+        console.log("Host end meeting");
+      });}
       console.log("User leave meeting");
       res.redirect("/feedback");
     });
