@@ -438,7 +438,7 @@ app.post('/addRoom',(req, res) => {
   });
   req.flash('info', 'Room created successfully!' );
   req.session.save();
-  res.redirect("home"));
+  res.redirect("home");
 
 });
 
@@ -452,7 +452,7 @@ app.post('/addChannel',(req, res) => {
       if(err1) throw err1;
       console.log("Insert Channel Successfully!");
     });
-    res.redirect("home"));
+    res.redirect("home");
 });
 
 //when user submit feedback form 
