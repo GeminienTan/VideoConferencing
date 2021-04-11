@@ -5,6 +5,7 @@ const mysqlConnection = mysql.createPool({
     user:'bf0341eb7f4f7d',
     password:'8a18f453',
     database:'heroku_e846e0cbb8faabc',
+    multipleStatements: true
   })
 
   mysqlConnection.getConnection(function(error){
