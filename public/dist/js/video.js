@@ -44,7 +44,7 @@ function Dish() {
 function setWidth(width, margin) {
     let Cameras = document.getElementsByTagName('Video');
     for (var s = 0; s < Cameras.length; s++) {
-        Cameras[s].style.width = width + "px";
+        //Cameras[s].style.width = width + "px";
         Cameras[s].style.border = "thick solid #8C9FFE";
         Cameras[s].style.margin = margin + "px";
         Cameras[s].style.height = (width * 0.55) + "px";
@@ -56,14 +56,3 @@ window.addEventListener("load", function (event) {
     Dish();
     window.onresize = Dish;
 }, false);
-/*
-$('#video-grid video').addEventListener("click", event => {
-    //const video = event.target;
-    
-    if (div.requestFullscreen) 
-	    div.requestFullscreen();
-    else if (div.webkitRequestFullscreen) 
-    	div.webkitRequestFullscreen();
-    else if (div.msRequestFullScreen) 
-      div.msRequestFullScreen();
-});*/

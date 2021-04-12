@@ -150,7 +150,7 @@ app.get("/admin/dashboard", (req, res) => {
 
 app.get("/admin/getUserDataByGender", (req, res) => {
   var data= [];
-  let sql = "SELECT u_gender as gender, COUNT(*) as count FROM user GROUP BY u_gender ";
+  let sql = "SELECT u_gender as gender, COUNT(*) as count FROM user GROUP BY u_gender";
     let query = mysqlConnection.query(sql,(err, rows) => {
     if(err) throw err;
     rows.forEach((row) => {
@@ -167,7 +167,7 @@ app.get("/admin/getUserDataByGender", (req, res) => {
 app.get("/admin/getUserDataByAgeGroup", (req, res) => {
   var data= [];
 
-  let sql = "SELECT count(u_id) AS count , CASE WHEN datediff(now(), u_dob) / 365.25 >= 65 THEN '65 years and over' WHEN datediff(now(), u_dob) / 365.25 >= 55 THEN '55-64' WHEN datediff(now(), u_dob) / 365.25 >= 25 THEN '25-54' WHEN datediff(now(), u_dob) / 365.25 > 15 THEN '15-24' ELSE '0-14' END AS age_group FROM user WHERE u_dob IS NOT NULL GROUP BY age_group ";
+  let sql = "SELECT count(u_id) AS count , CASE WHEN datediff(now(), u_dob) / 365.25 >= 65 THEN '65 years and over' WHEN datediff(now(), u_dob) / 365.25 >= 55 THEN '55-64' WHEN datediff(now(), u_dob) / 365.25 >= 25 THEN '25-54' WHEN datediff(now(), u_dob) / 365.25 > 15 THEN '15-24' ELSE '0-14' END AS age_group FROM user GROUP BY age_group ";
     let query = mysqlConnection.query(sql,(err, rows) => {
     if(err) throw err;
     rows.forEach((row) => {
@@ -247,7 +247,7 @@ app.post("/admin/addAdmin", (req, res) => {
    let sql = "INSERT INTO admin SET ?";
     let query = mysqlConnection.query(sql, data,(err, results) => {
     if(err) throw err;
-    res.redirect("admin");
+    res.redirect("back");
     });
 });
 
@@ -302,6 +302,8 @@ app.post('/loginGoogle',(req, res) => {
       req.session.u_name = u_name;
       req.session.save();
       res.json({msg:'success'})
+      //res.redirect('/home');
+      //res.send({message:"success"})
       
     });
   });
@@ -636,6 +638,7 @@ app.post('/addChat',(req, res) => {
               res.redirect('/home');
 
             });
+    console.log(chatData);
   }
 });
 
@@ -1134,7 +1137,16 @@ app.get("/leaveMeeting/:m_id&:id&:type", (req, res) => {
   const m_id = req.params.m_id;
   const id = req.params.id; 
   var sql;
-  if(type=="user"){
+  if(type =="host"){
+    let sql1 = "UPDATE meeting SET m_etime = ? where m_id = ? AND m_owner_id =? ";
+    let query1 = mysqlConnection.query(sql1,[current_time,m_id,id],(err1, results) => {
+      if(err1) throw err1;
+      console.log("Host end meeting");
+    });
+
+    sql = "UPDATE meeting_participant SET mp_leave_time = ? where m_id = ? AND mp_u_id =? ";
+  }
+  else if(type=="user"){
     sql = "UPDATE meeting_participant SET mp_leave_time = ? where m_id = ? AND mp_u_id =? ";
   }
   else if(type=="guest"){
@@ -1195,17 +1207,6 @@ app.get("/:room", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  
-  /*socket.emit('message','Welcome');
-  socket.broadcast.emit('message','A user has enter the page');
-  socket.on('disconnect',()=>{
-    io.emit('message','A user has left the page');
-  });
-
-  // listen for conversation message 
-  socket.on('conversationMessage', msg =>{
-    io.emit('message',msg);
-  });*/
 
   socket.on('offer', (data) => {
     socket.broadcast.emit('offer', data);
@@ -1289,16 +1290,6 @@ app.post('/insertChannelMessage',(req, res) => {
 });
 
 function uploadFile(sampleFile,req, res) {
-  /*let sampleFile;
-  
-
-  if (!req.files || Object.keys(req.files).length === 0) {
-    //return res.status(400).send('No files were uploaded.');
-    return false;
-  }
-
-  // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-  sampleFile = req.files.File;*/
   let uploadPath;
   uploadPath = __dirname + '/public/dist/file/' + sampleFile.name;
 
