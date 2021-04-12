@@ -208,6 +208,7 @@ body {
 }
 /* Camera */
 .Dish video {
+    width:400px;
     border: thick solid #fff;
     position: relative;
     vertical-align: middle;
