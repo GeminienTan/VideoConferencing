@@ -507,7 +507,7 @@
 											<div class="inside">
 												
 												<% if(conversation[i].receiver_id == u_id){ %>
-												<a href="#"><img class="avatar-xl" src="<%= conversation[i].sender_profilepic %>" data-toggle="tooltip" data-placement="top" title="Lean" alt="avatar"></a>
+												<a href="#"><img class="avatar-xl" src="<%= conversation[i].sender_profilepic %>" data-toggle="tooltip" data-placement="top" title="<%= conversation[i].sender_name %>" alt="avatar"></a>
 												
 													<% if(conversation[i].sender_status == 'A'){ %>
 													<div class="status">
@@ -1144,42 +1144,6 @@
 		<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
 
 		<script>
-			/*console.log(Notification.permission);
-			notifyMe();
-			function notifyMe() {
-				// Let's check if the browser supports notifications
-				if (!("Notification" in window)) {
-					alert("This browser does not support desktop notification");
-				}
-				
-				// Let's check whether notification permissions have already been granted
-				else if (Notification.permission === "granted") {
-					// If it's okay let's create a notification
-					//var notification = new Notification("Hi there!");
-					Push.create("Welcome!"),{
-						body:"How are you?",
-						icon:'https://image.shutterstock.com/image-vector/chat-icon-illustration-isolated-vector-260nw-560721067.jpg',
-						timeout: 4000,
-						onclick:function(){
-							window.focus();
-							this.close();
-						}
-					}
-				}
-
-				// Otherwise, we need to ask the user for permission
-				else if (Notification.permission === "denied" || Notification.permission === "default") {
-					Notification.requestPermission().then(function (permission) {
-					// If the user accepts, let's create a notification
-					if (permission === "granted") {
-						var notification = new Notification("Hi there!");
-					}
-					});
-				}
-				else{
-					alert("yes");
-				}
-			}*/
 
 			function signOut() {
 				JSAlert.confirm("Are you sure to log out?").then(function(result) {
@@ -1194,6 +1158,7 @@
 						console.log('User signed out.');
 						window.location.href="/logout";
 					});
+					window.location.href="/logout";
 				}
 				});
 				

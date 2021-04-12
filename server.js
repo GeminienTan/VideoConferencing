@@ -454,7 +454,7 @@ app.post('/addChannel',(req, res) => {
       if(err1) throw err1;
       console.log("Insert Channel Successfully!");
     });
-    res.redirect("home");
+    res.redirect("/home");
 });
 
 //when user submit feedback form 
@@ -468,7 +468,7 @@ app.post('/submitFeedback',(req, res) => {
     if(err) throw err;
     console.log("Insert Feedback");
   });
-  res.redirect("home");
+  res.redirect("/home");
 });
 
 app.post('/addMember',(req, res) => {
@@ -536,7 +536,7 @@ app.post('/addContact',(req, res) => {
                     let query = mysqlConnection.query(sql, data,(err, results) => {
                       if(err) throw err;
                       req.flash('info', 'Insert Contact Successfully!' );
-                      res.redirect("back");
+                      res.redirect('/home');
 
                     });
                   }  

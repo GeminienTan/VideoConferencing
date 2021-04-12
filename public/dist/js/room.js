@@ -101,7 +101,29 @@ window.addEventListener("beforeunload", function (e) {
   (e || window.event).returnValue = confirmationMessage; //Gecko + IE
                               //Webkit, Safari, Chrome
   return confirmationMessage;
-  //window.location.href = "/leaveMeeting/"+m_id+"&"+id+"&"+type;
+  
+});
+
+window.addEventListener('unload', () => {
+  if (type =="host"){
+      window.open(
+      "/leaveMeeting/"+m_id+"&"+host_id+"&"+"host",
+      '_blank' // <- This is what makes it open in a new window.
+      );
+  }
+  if (type =="user"){
+    window.open(
+    "/leaveMeeting/"+m_id+"&"+u_id+"&"+"user",
+    '_blank' // <- This is what makes it open in a new window.
+    );
+  }
+  if (type =="guest"){
+    window.open(
+    "/leaveMeeting/"+m_id+"&"+g_id+"&"+"guest",
+    '_blank' // <- This is what makes it open in a new window.
+    );
+  }
+  
 });
 
 

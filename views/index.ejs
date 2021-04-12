@@ -145,15 +145,12 @@
 			const joinGuestMeeting = () => {
 				var meetingId = $("#join-meetno");
 				var errorMessage;
-
-				alert(meetingId.val());
 				(async () => {
 					const rawResponse = await fetch(`/validateName/${meetingId.val()}`);
 					const content = await rawResponse.json();
 
 					console.log(content);
 					if (content.valid) {
-						alert("ok")
 						window.location.href = `/joinGuestMeeting/${meetingId.val()}`;
 					} else {
 						JSAlert.alert("Sorry, Room not found.");
