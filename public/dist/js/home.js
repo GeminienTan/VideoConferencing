@@ -321,7 +321,7 @@ function validFileType(file) {
 }
 
 const checkPoint = (u_name,point) => {
-  if(point < 10){
+  if(point < 2){
     JSAlert.alert("Sorry " +u_name+", your point is not enough to claim the rewards.");
   }
   else{

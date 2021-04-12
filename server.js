@@ -122,7 +122,7 @@ app.post("/admin/sign-in", (req, res) => {
     if(err) throw err;
     if(rows==0){
       
-      res.redirect("back");
+      res.redirect("admin");
     }
     rows.forEach((row) => {
       const ad_id = row.ad_id;
@@ -208,7 +208,7 @@ app.get("/admin/getAllGuest", (req, res) => {
 
 app.get("/admin/getAllAdmin", (req, res) => {
   if(!req.session.ad_id) {
-    res.redirect('/admin');
+    res.redirect('/admin/dashboard');
   }
   let sql = "SELECT * FROM admin";
   let query = mysqlConnection.query(sql,(err, results) => {
@@ -219,7 +219,7 @@ app.get("/admin/getAllAdmin", (req, res) => {
 
 app.get("/admin/getAllFeedback", (req, res) => {
   if(!req.session.ad_id) {
-    res.redirect('/admin');
+    res.redirect('/admin/dashboard');
   }
   var queries = [
     "SELECT AVG(f_star) AS averageStar FROM feedback",
@@ -247,7 +247,7 @@ app.post("/admin/addAdmin", (req, res) => {
    let sql = "INSERT INTO admin SET ?";
     let query = mysqlConnection.query(sql, data,(err, results) => {
     if(err) throw err;
-    res.redirect("back");
+    res.redirect("admin/dashboard");
     });
 });
 
@@ -510,7 +510,7 @@ app.post('/addContact',(req, res) => {
     rows.forEach((row) => {
       if(ct_email == row.u_email){
         req.flash('danger', 'You cannot add yourself into contact list' );
-        res.redirect("back");
+        res.redirect("home");
       }
       else{
           //check if the contact is already exist
@@ -519,7 +519,7 @@ app.post('/addContact',(req, res) => {
             if(err2) throw err2;
             if(rows2 !=0){
               req.flash('danger', 'Contact already exist!' );
-              res.redirect("back");
+              res.redirect("home");
             }
             //check if the email is exist
             else{
@@ -528,7 +528,7 @@ app.post('/addContact',(req, res) => {
                   if(err3) throw err3;
                   if(rows3==0){
                     req.flash('danger', 'This email is not a registered email' );
-                    res.redirect("back");
+                    res.redirect("home");
                   }
                   else{
                     let data = {ct_email: ct_email, u_id:u_id ,ct_status:'A'};
@@ -661,7 +661,7 @@ app.post('/addSchedule',(req, res) => {
         let query2 = mysqlConnection.query(sql2,[attendees[$i],s_id],(err2, results2) => {
           if(err2) throw err2;
           req.flash('info', 'Insert Schedule Successfully!' );
-          res.redirect("back");
+          res.redirect("home");
         });
       }
     }
