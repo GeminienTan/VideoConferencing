@@ -652,20 +652,33 @@ app.post('/addSchedule',(req, res) => {
     if(err) throw err;
     const s_id = results.insertId;
     console.log("Insert Schedule Successfully");
-
-    for($i=0;$i<attendees.length;$i++) {
-
-      if(attendees[$i] != '')
-      {
-        let sql2 = "INSERT INTO attendees SET u_id=(SELECT u_id FROM user WHERE u_name = ? ),s_id=?";
-        let query2 = mysqlConnection.query(sql2,[attendees[$i],s_id],(err2, results2) => {
-          if(err2) throw err2;
-          req.flash('info', 'Insert Schedule Successfully!' );
-          res.redirect("home");
-        });
-      }
+    
+    const attendeesIsArray = Array.isArray(attendees);
+    if (attendeesIsArray == true){
+      for($i=0;$i<attendees.length;$i++) {
+        
+        if(attendees[$i] != '')
+        {
+          let sql2 = "INSERT INTO attendees SET u_id= (SELECT u_id FROM user WHERE u_name = ? ),s_id=?";
+          let query2 = mysqlConnection.query(sql2,[attendees[$i],s_id] ,(err2, results) => {
+            if(err2) throw err2;
+            console.log("Insert many attendees successfully.");
+          });
+        }
+      }  
     }
-  });
+    else{
+        if (attendees !=""){
+          let sql3 = "INSERT INTO attendees SET u_id= (SELECT u_id FROM user WHERE u_name = ? ),s_id=?";
+          let query3 = mysqlConnection.query(sql3,[attendees,s_id],(err3, results3) => {
+            if(err3) throw err3;
+            console.log("Insert 1 attendees successfully");
+          });
+        }
+        
+    }
+    });
+    res.redirect("home");
 
 });
 

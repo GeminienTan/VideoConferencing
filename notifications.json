@@ -106,5 +106,15 @@
     "date": "2021-04-12 19:15:06",
     "status": "unread",
     "type": "person_add"
+  },
+  {
+    "notification": "has just added you into Room 1 ",
+    "from": "Geminien Tan",
+    "u_id": [
+      34
+    ],
+    "date": "2021-04-13 15:35:13",
+    "status": "unread",
+    "type": "person_add"
   }
 ]
