@@ -122,7 +122,7 @@ app.post("/admin/sign-in", (req, res) => {
     if(err) throw err;
     if(rows==0){
       
-      res.redirect("admin");
+      res.redirect("/");
     }
     rows.forEach((row) => {
       const ad_id = row.ad_id;
@@ -920,7 +920,6 @@ app.get("/createMeeting/:u_id&:m_type&:id&:cameraOn", (req, res) => {
     let query2 = mysqlConnection.query(sql2,[participantData,m_id],(err2, results2) => {
       if(err2) throw err2;
       console.log("Insert Participant Successfully");
-      
       res.redirect(`/${room}`);
     });
   });

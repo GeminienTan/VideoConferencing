@@ -17,10 +17,7 @@ const joinMeeting = (u_id,m_id,m_code) => {
 };
 const createMeeting = (u_id,type,c_id,cameraOn) => {
 
-  window.open(
-    "/createMeeting/"+u_id+"&"+type+"&"+c_id+"&"+cameraOn,
-    '_blank' // <- This is what makes it open in a new window.
-  );
+  window.location.href = "/createMeeting/"+u_id+"&"+type+"&"+c_id+"&"+cameraOn;
 };
 
 const addAgenda = (id,addBtn) => { 
@@ -321,7 +318,7 @@ function validFileType(file) {
 }
 
 const checkPoint = (u_name,point) => {
-  if(point < 2){
+  if(point < 5){
     JSAlert.alert("Sorry " +u_name+", your point is not enough to claim the rewards.");
   }
   else{

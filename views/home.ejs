@@ -484,7 +484,7 @@
 										
 										<div class="toast-body ">
 											<p>Click to join meeting now!</p>
-											<a id="join-meeting-<%= channel[j].c_id %>" class="btn btn-primary"onclick="joinMeeting('<%= u_id %>','<%= meeting[i].m_id %>','<%= meeting[i].m_code %>')">Join Meeting</a>
+											<a id="join-meeting-<%= channel[j].c_id %>" class="btn btn-primary"onclick="joinMeeting('<%= u_id %>','<%= meeting[i].m_id %>','<%= meeting[i].m_code %>')"><i class="material-icons md-30">queue_play_next</i>Join Meeting</a>
 										</div>
 									</div>
 								<% } 
@@ -546,7 +546,7 @@
 
 												<% for (var x in meeting){ %>
 														<% if(conversation[i].cv_id == meeting[x].cv_id){ %>
-															<a class="btn btn-primary btn-join-meeting" onclick="joinMeeting('<%= u_id %>','<%= meeting[x].m_id %>','<%= meeting[x].m_code %>')">Join Meeting</a>
+															<a class="btn btn-primary btn-join-meeting" onclick="joinMeeting('<%= u_id %>','<%= meeting[x].m_id %>','<%= meeting[x].m_code %>')"><i class="material-icons md-30">queue_play_next</i>Join Meeting</a>
 														<% }
 												}%>
 												<button class="btn connect d-md-block d-none btn-create-meeting" name="2" onclick="createMeeting('<%= u_id %>','conversation','<%= conversation[i].cv_id %>',false)"><i class="material-icons md-30">phone_in_talk</i></button>

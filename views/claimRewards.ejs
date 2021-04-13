@@ -46,7 +46,7 @@
                                     <div id="message1" class="card text-white cside">
                                         <span
                                         style="width: inherit; height: 500px; overflow: hidden;"
-                                        scrolling="no"><h2>Unlock if points reach 500.</h2>
+                                        scrolling="no"><h2>Unlock if points reach 10.</h2>
                                         </span>
                                     </div>
                                 </div>
@@ -64,7 +64,7 @@
                                     <div id="message2" class="card text-white cside">
                                         <span
                                         style="width: inherit; height: 500px; overflow: hidden;"
-                                        scrolling="no"><h2>Unlock if points reach 300.</h2>
+                                        scrolling="no"><h2>Unlock if points reach 30.</h2>
                                         </span>
                                     </div>
                                 </div>
@@ -82,7 +82,7 @@
                                     <div id="message3" class="card text-white cside">
                                         <span
                                         style="width: inherit; height: 500px; overflow: hidden;"
-                                        scrolling="no"><h2>Unlock if points reach 500.</h2>
+                                        scrolling="no"><h2>Unlock if points reach 50.</h2>
                                         </span>
                                     </div>
                                 </div>
@@ -108,15 +108,15 @@
             const message1 = document.getElementById('message1');
             const message2 = document.getElementById('message2');
             const message3 = document.getElementById('message3');
-            if(points >=5){
+            if(points >=10){
                 game1.style.display="block";
                 message1.style.display="none";
             }
-            if(points >=5){
+            if(points >=30){
                 game2.style.display="block";
                 message2.style.display="none";
             }
-            if(points >=5){
+            if(points >=50){
                 game3.style.display="block";
                 message3.style.display="none";
             }
