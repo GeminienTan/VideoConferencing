@@ -164,7 +164,7 @@
 												<% for (var i in conversation){ %>
 													<% if(conversation[i].receiver_id == u_id){ %>
 													<a href="#list-chat-<%= conversation[i].cv_id %>" class="filterDiscussions all single" id="list-chat-list" data-toggle="list" role="tab">
-														<img class="avatar-md" src="<%= conversation[i].sender_profilepic %>" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+														<img class="avatar-md" src="<%= conversation[i].sender_profilepic %>" data-toggle="tooltip" data-placement="top" title="<%= conversation[i].sender_name %>" alt="avatar">
 														<% if(conversation[i].sender_status == 'A'){ %>
 															<div class="status">
 																<i class="material-icons online">fiber_manual_record</i>
@@ -183,7 +183,7 @@
 													<% }
 													else if(conversation[i].sender_id == u_id){ %>
 														<a href="#list-chat-<%= conversation[i].cv_id %>" class="filterDiscussions all unread single" id="list-chat-list" data-toggle="list" role="tab">
-															<img class="avatar-md" src="<%= conversation[i].receiver_profilepic %>" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+															<img class="avatar-md" src="<%= conversation[i].receiver_profilepic %>" data-toggle="tooltip" data-placement="top" title="<%= conversation[i].receiver_name %>" alt="avatar">
 															
 															<% if(conversation[i].receiver_status == 'A'){ %>
 															<div class="status">
