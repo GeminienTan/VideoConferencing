@@ -351,7 +351,7 @@ app.get("/home",(req,res) =>{
         "SELECT u1.u_name as sender_name, u2.u_name as receiver_name, u1.u_id as sender_id, u2.u_id as receiver_id,  u1.u_profilepic as sender_profilepic, u2.u_profilepic as receiver_profilepic, u1.u_status as sender_status, u2.u_status as receiver_status, cv_id FROM conversation INNER JOIN user u1 ON(u1.u_id = conversation.cv_sender) INNER JOIN user u2 ON(u2.u_id = conversation.cv_receiver) WHERE cv_sender = ? or cv_receiver = ?",
         "SELECT u1.u_name as sender_name, u2.u_name as receiver_name, u1.u_id as sender_id, u2.u_id as receiver_id, u1.u_profilepic as sender_profilepic, u2.u_profilepic as receiver_profilepic,cm_content,cm_datetime,cm_file,chat_message.cv_id as cv_id FROM chat_message INNER JOIN user u1 ON(u1.u_id = chat_message.cm_sender) INNER JOIN user u2 ON(u2.u_id = chat_message.cm_receiver) WHERE chat_message.cm_status = 'A' AND cm_sender=? OR cm_receiver=?  ORDER BY cm_datetime ASC ",
         "SELECT user.u_id as sender_id, user.u_name as sender_name, user.u_profilepic as sender_profilepic, ch_id, ch_content, ch_file, c_id, ch_datetime from channel_message INNER JOIN user ON (user.u_id = channel_message.ch_sender_id) WHERE ch_status='A' ORDER BY ch_datetime ASC",
-        "SELECT * from meeting WHERE m_etime IS NULL AND m_owner_id !=?",
+        "SELECT * from meeting WHERE m_etime IS NULL",
       ];
     
       mysqlConnection.query(queries.join(';'),[u_id,u_id,u_id,u_id,u_id,u_id,u_id,u_id,u_id,u_id,u_id,u_id],(err, results, fields) => {
@@ -865,7 +865,7 @@ app.get("/createMeeting/:u_id&:m_type&:id&:cameraOn", (req, res) => {
         addNotification(notificationContent);
       });
     });
-    
+    res.redirect(`/${room}`);
   }
   else if (m_type == "channel"){
     meetingData ={m_stime:current_time,m_owner_id:u_id,m_code:room,c_id:id};
@@ -920,9 +920,11 @@ app.get("/createMeeting/:u_id&:m_type&:id&:cameraOn", (req, res) => {
     let query2 = mysqlConnection.query(sql2,[participantData,m_id],(err2, results2) => {
       if(err2) throw err2;
       console.log("Insert Participant Successfully");
-      res.redirect(`/${room}`);
+      
     });
+    res.redirect(`/${room}`);
   });
+  
 });
 
 app.get("/deleteChannel/:channel_id", (req, res) => {

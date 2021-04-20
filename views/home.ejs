@@ -26,7 +26,10 @@
 				</div>
 			<% }
 			else if (errorMessage !=""){ %>
-				<script>JSAlert.alert('<%=errorMessage %>')</script>
+				<div id="flashwrapper" class="alert alert-dismissible bg-danger" role="alert" style="margin-bottom:0px ;"><%= errorMessage %>
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close" onClick="close('flashwrapper')">
+					<span aria-hidden="true">&times;</span>
+				</div>
 			<% } %>
 			<div class="layout">
 				<!-- Start of Navigation -->
@@ -124,7 +127,12 @@
 												<a href="#" class="filterMembers all contact" data-toggle="modal" data-target="#viewProfile-<%= contact[i].ct_id %>">
 													<img class="avatar-md" src="<%= contact[i].u_profilepic %>" data-toggle="tooltip" data-placement="top" title="<%= contact[i].u_name %>" alt="avatar">
 													<div class="status">
-														<i class="material-icons online">fiber_manual_record</i>
+														<% if(contact[i].u_status == 'A'){ %>
+																<i class="material-icons online">fiber_manual_record</i>
+														<%}
+														else{ %>
+																<i class="material-icons offline">fiber_manual_record</i>
+														<% } %>
 													</div>
 													<div class="data">
 														<h5><%= contact[i].u_name %></h5>
@@ -401,7 +409,7 @@
 														</div>
 														<i class="material-icons">keyboard_arrow_right</i>
 													</a>
-													<div class="collapse" id="speedTest" aria-labelledby="headingFive" data-parent="#accordionSettings">
+													<div class="collapse " id="speedTest" aria-labelledby="headingFive" data-parent="#accordionSettings">
 														<div class="content no-layer">
 															<div class="set">
 																<div class="details">
@@ -433,7 +441,7 @@
 																	<h5>Tell us what you think</h5>
 																		<p>Provide us a feedback on how we can improve our servce. </p>
 																</div>
-																<a href="/feedback" class="" id="list-test-list" target="_blank">
+																<a href="/feedback" class="" id="list-feedback-list" target="_blank">
 																	<span class="btn button">Open feedback</span>
 																</a>
 															</div>
@@ -526,7 +534,7 @@
 												<% }
 												
 												else if(conversation[i].sender_id == u_id){ %>
-													<a href="#"><img class="avatar-xl" src="<%= conversation[i].receiver_profilepic %>" data-toggle="tooltip" data-placement="top" title="Lean" alt="avatar"></a>
+													<a href="#"><img class="avatar-xl" src="<%= conversation[i].receiver_profilepic %>" data-toggle="tooltip" data-placement="top" title="<%= conversation[i].receiver_name %>" alt="avatar"></a>
 												
 													<% if(conversation[i].receiver_status == 'A'){ %>
 													<div class="status">
@@ -646,7 +654,7 @@
 									</div>
 								</div>
 								<hr>
-								<form ref="uploadForm" action="addChat" method="POST" encType="multipart/form-data">		
+								<form ref="uploadForm" action="addChat" method="POST" encType="multipart/form-data">			
 								<div class="container">
 									<div class="col-md-12">
 										<input type="text" value="<%= conversation[i].cv_id %>" name="cv_id" hidden>
@@ -894,6 +902,25 @@
 								</div>
 							</form>
 							</div>
+							<!-- End of Chat -->
+                            <div class="call" id="call3">
+								<div class="content">
+									<div class="container ">
+										<div class="col-md-12">
+											<div class="inside">
+												<div class="panel">
+													<div class="participant">
+                                                        <img class="avatar-xxl" src="<%= account[0].u_profilepic %>" alt="avatar">
+														<span>You started a meeting on the new tab.</span>
+													</div>							
+													<button class="btn back" name="3"><i class="material-icons md-24">arrow_back</i></button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End of Call -->
 						</div>
 							<% } 
 						}%>
@@ -962,14 +989,21 @@
 										 <div class="col-md-12">
 											<div class="inside">
 											   <div class="data">
-												  <h3>Meeting Agenda</h3>
+												  <h3>Meeting Agenda - <%= schedule[i].s_title%></h3>
 											   </div>
-											   <div class="dropdown">
-												  <button class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons md-30">more_vert</i></button>
-												  <div class="dropdown-menu dropdown-menu-right">
-													 <button class="dropdown-item" onclick="deleteSchedule('<%= schedule[i].s_id%>')"><i class="material-icons">delete</i>Delete Schedule</button>
-												  </div>
-											   </div>
+											   <button class="btn connect d-md-block d-none btn-create-meeting" name="2" onclick="createMeeting('<%= u_id %>','schedule','<%= schedule[i].s_id%>',false)"><i class="material-icons md-30">phone_in_talk</i></button>
+												<button class="btn connect d-md-block d-none btn-create-meeting" name="2" onclick="createMeeting('<%= u_id %>','schedule','<%= schedule[i].s_id%>',true)"><i class="material-icons md-36">videocam</i></button>
+												<!--<button class="btn d-md-block d-none"><i class="material-icons md-30">info</i></button>-->
+												<div class="dropdown">
+													<button class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons md-30">more_vert</i></button>
+													<div class="dropdown-menu dropdown-menu-right">
+														<button class="dropdown-item connect btn-create-meeting" name="1" onclick="createMeeting('<%= u_id %>','schedule','<%= schedule[i].s_id%>',false)"><i class="material-icons">phone_in_talk</i>Voice Call</button>
+														<button class="dropdown-item connect btn-create-meeting" name="1" onclick="createMeeting('<%= u_id %>','schedule','<%= schedule[i].s_id%>',true)"><i class="material-icons">videocam</i>Video Call</button>
+														<hr>
+														<button class="dropdown-item" data-toggle="modal" data-target="#addFiles" onclick="addFiles('<%= schedule[i].s_id%>')"><i class="material-icons">folder</i>View All Shared Files</button>
+														<button class="dropdown-item" onclick="deleteSchedule('<%= schedule[i].s_id%>')"><i class="material-icons">delete</i>Delete Schedule</button>
+													</div>
+												</div>
 											</div>
 										 </div>
 									  </div>
@@ -1036,7 +1070,7 @@
 															<th class="text-center">Topic</th>
 															<th class="text-center">Presenter </th>
 															<th class="text-center">Time Allocated (min)</th>
-															<th class="text-center">Delete</th>
+															<th class="text-center">Action</th>
 														 </tr>
 													  </thead>
 													  <tbody>
@@ -1114,8 +1148,46 @@
 		<script src="dist/js/push.min.js"></script>
 		<script src="dist/js/serviceWorker.min.js"></script>
 		<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+		
+		
 
 		<script>
+			/*console.log(Notification.permission);
+			notifyMe();
+			function notifyMe() {
+				// Let's check if the browser supports notifications
+				if (!("Notification" in window)) {
+					alert("This browser does not support desktop notification");
+				}
+				
+				// Let's check whether notification permissions have already been granted
+				else if (Notification.permission === "granted") {
+					// If it's okay let's create a notification
+					//var notification = new Notification("Hi there!");
+					Push.create("Welcome!"),{
+						body:"How are you?",
+						icon:'https://image.shutterstock.com/image-vector/chat-icon-illustration-isolated-vector-260nw-560721067.jpg',
+						timeout: 4000,
+						onclick:function(){
+							window.focus();
+							this.close();
+						}
+					}
+				}
+
+				// Otherwise, we need to ask the user for permission
+				else if (Notification.permission === "denied" || Notification.permission === "default") {
+					Notification.requestPermission().then(function (permission) {
+					// If the user accepts, let's create a notification
+					if (permission === "granted") {
+						var notification = new Notification("Hi there!");
+					}
+					});
+				}
+				else{
+					alert("yes");
+				}
+			}*/
 
 			function signOut() {
 				JSAlert.confirm("Are you sure to log out?").then(function(result) {

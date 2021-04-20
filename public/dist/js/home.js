@@ -16,8 +16,11 @@ const joinMeeting = (u_id,m_id,m_code) => {
   })();
 };
 const createMeeting = (u_id,type,c_id,cameraOn) => {
-
-  window.location.href = "/createMeeting/"+u_id+"&"+type+"&"+c_id+"&"+cameraOn;
+  window.open(
+    "/createMeeting/"+u_id+"&"+type+"&"+c_id+"&"+cameraOn,
+    '_blank' // <- This is what makes it open in a new window.
+  );
+  //window.location.href = "/createMeeting/"+u_id+"&"+type+"&"+c_id+"&"+cameraOn;
 };
 
 const addAgenda = (id,addBtn) => { 
